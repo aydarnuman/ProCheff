@@ -1,0 +1,41 @@
+# Cloud Build pipeline: build image, push to Artifact Registry, deploy to Cloud Run
+# Assumes:
+# - Artifact Registry repo: LOCATION-docker.pkg.dev/PROJECT_ID/procheff/procheff
+# - Cloud Run service: procheff
+# - Region: LOCATION (e.g., europe-west1)
+# Set substitutions when creating the trigger: _REGION, _SERVICE, _REPO
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+substitutions:
+  _REGION: "us-west1"
+  _SERVICE: "procheff"
+  _REPO: "procheff"
+
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Build image'
+    dir: 'ProCheff'
+    args:
+      [ 'build', '-t', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA', '.' ]
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push image'
+    args:
+      [ 'push', '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA' ]
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'Deploy to Cloud Run'
+    entrypoint: gcloud
+    args:
+      [ 'run', 'deploy', '${_SERVICE}',
+        '--image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA',
+        '--region=${_REGION}',
+        '--platform=managed',
+        '--allow-unauthenticated',
+        '--port=8080',
+        '--set-secrets=GEMINI_API_KEY=gemini-key:latest' ]
+
+images:
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA'
