@@ -11,7 +11,9 @@ options:
 substitutions:
   _REGION: "us-west1"
   _SERVICE: "procheff"
-  _REPO: "procheff"
+  # Mevcut projedeki Artifact Registry deposu: cloud-run-source-deploy
+  # İstersen tetikleyici substitutions ile farklı bir depo adı geçebilirsin.
+  _REPO: "cloud-run-source-deploy"
 
 steps:
   - name: 'gcr.io/cloud-builders/docker'
