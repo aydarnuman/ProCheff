@@ -1,0 +1,5 @@
+{
+  "name": "Food Cost Calculator",
+  "description": "A comprehensive web application to manage ingredient prices, create recipes, and calculate meal costs with profit margins and VAT. Features include data persistence, import/export, and a default menu pool.",
+  "requestFramePermissions": []
+}
