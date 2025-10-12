@@ -1,8 +1,9 @@
-name: Deploy to Server via SSH
+name: Deploy to Server via SSH (DISABLED)
 
-on:
-  push:
-    branches: [ "main" ]
+# Temporarily disabled - SSH secrets not configured
+# on:
+#   push:
+#     branches: [ "main" ]
 
 jobs:
   deploy:
