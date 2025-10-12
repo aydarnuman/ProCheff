@@ -114,3 +114,18 @@ Bu proje kapsamında kullanılan tüm yapay zekâ asistanları (Claude Sonnet 4,
 - 🤖 **VS Code AI Extensions** → Türkçe yardım metinleri
 - 🚀 **Google Gemini** (ProCheff entegrasyonu) → Türkçe tarif analizleri
 
+
+---
+
+## 🤖 Automation Permissions
+Claude Sonnet 4 ve GitHub Copilot için otomatik işlem izni yapılandırması:
+
+permissions:
+  auto_run: true        # Kod değişikliklerinde otomatik aksiyon
+  auto_review: true     # Claude / Copilot onay sormadan review başlatsın
+  auto_commit: true     # Güvenli değişiklikleri (docs, yml, lint) doğrudan commitle
+  require_confirmation: false  # "Allow" / "Skip" istemesin
+  safe_mode: restricted  # Sadece proje dizininde işlem yap
+
+# Bu ayar, insan onayı gerektiren istekleri devre dışı bırakır.
+# Eğer manuel kontrol istersen, require_confirmation değerini true yap.
