@@ -1,0 +1,45 @@
+# General
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# Node
+node_modules/
+dist/
+build/
+.npm-cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.env
+.env.*
+
+# Java / JVM
+*.class
+*.jar
+*.war
+*.ear
+.gradle/
+/build/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# Misc
+coverage/
+.next/
+.out/
+.cache/
+.DS_Store

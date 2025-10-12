@@ -1,0 +1,25 @@
+# Keep Docker context small and reproducible
+# Vite build output (built in container anyway)
+dist/
+
+# Node
+node_modules/
+server/node_modules/
+
+# VCS
+.git/
+.gitignore
+
+# Env files (never send secrets into image context)
+.env
+.env.*
+server/.env
+
+# OS/IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.iml
+*.log
+*.tmp
