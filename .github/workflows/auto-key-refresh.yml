@@ -1,0 +1,16 @@
+name: 🔁 Auto Key Refresh
+
+on:
+  schedule:
+    - cron: '0 */24 * * *'
+  push:
+    branches: [ main ]
+
+jobs:
+  refresh-keys:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Run Auto Key Manager
+        run: bash scripts/auto_key_manager.sh
