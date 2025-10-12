@@ -1,10 +1,11 @@
-name: 🧠 Claude Auto-Debug & Optimization Agent
+name: 🧠 Claude Auto-Debug & Optimization Agent (DISABLED)
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+# Temporarily disabled - anthropic-ai/claude-coding-agent action does not exist
+# on:
+#   push:
+#     branches: [ main ]
+#   pull_request:
+#     branches: [ main ]
 
 jobs:
   claude_review:
@@ -13,31 +14,37 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Claude Auto-Debug Review
-        uses: anthropic-ai/claude-coding-agent@latest
-        with:
-          model: sonnet-4
-          mode: review
-          review_scope: "changed_files"
-          review_depth: "extended"
-          output_file: ".github/claude-auto-review.md"
-          include_patterns: |
-            **/*.ts
-            **/*.tsx
-            **/*.js
-            **/*.json
-            **/*.md
-          exclude_patterns: |
-            node_modules/**
-            .next/**
-            dist/**
-            build/**
-          prompt: |
-            You are an AI senior engineer reviewing the ProCheff project (Next.js + Express + Google Gemini integration).
-            Focus your review on:
-            - TypeScript type safety
-            - Code readability and performance
-            - Security issues (especially around Gemini API and environment variables)
-            - TailwindCSS optimization and component reusability
-            - Correct use of performGeminiAnalysis and safeCall helpers
-            Provide specific suggestions in Turkish where applicable.
+      # - name: Claude Auto-Debug Review
+      #   uses: anthropic-ai/claude-coding-agent@latest  # This action doesn't exist
+      #   with:
+      #     model: sonnet-4
+      #     mode: review
+      #     review_scope: "changed_files"
+      #     review_depth: "extended"
+      #     output_file: ".github/claude-auto-review.md"
+      #     include_patterns: |
+      #       **/*.ts
+      #       **/*.tsx
+      #       **/*.js
+      #       **/*.json
+      #       **/*.md
+      #     exclude_patterns: |
+      #       node_modules/**
+      #       .next/**
+      #       dist/**
+      #       build/**
+      #     prompt: |
+      #       You are an AI senior engineer reviewing the ProCheff project (Next.js + Express + Google Gemini integration).
+      #       Focus your review on:
+      #       - TypeScript type safety
+      #       - Code readability and performance
+      #       - Security issues (especially around Gemini API and environment variables)
+      #       - TailwindCSS optimization and component reusability
+      #       - Correct use of performGeminiAnalysis and safeCall helpers
+      #       Provide specific suggestions in Turkish where applicable.
+      
+      - name: Placeholder for Future AI Review
+        run: |
+          echo "🤖 AI Code Review placeholder - Will be implemented when action becomes available"
+          echo "📋 Workflow successfully disabled to prevent failures"
+          echo "✅ Ready for future Claude/OpenAI integration"
