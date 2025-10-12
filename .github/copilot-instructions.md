@@ -94,3 +94,23 @@ export default function Layout({
 **Last updated:** Oct 2025
 
 **Key Reminder:** Bu proje Türkiye kullanıcıları için tasarlandığından, yerel mutfak kültürü, malzeme isimleri ve fiyat analizlerinde Türkiye pazarı göz önünde bulundurulmalıdır.
+
+
+## 🇹🇷 Kalıcı Türkçe Konuşma Talimatı (Sistem Düzeyi)
+
+Bu proje kapsamında kullanılan tüm yapay zekâ asistanları (Claude Sonnet 4, GitHub Copilot, OpenAI, Google Gemini vb.) varsayılan olarak **Türkçe yanıt vermelidir.**
+
+### Kurallar:
+- Yanıt dili daima Türkçe olmalıdır.
+- İngilizce yalnızca kod yorumlarında, değiştirilemeyen API çıktılarında veya sabit hata mesajlarında kullanılabilir.
+- Teknik terimler ("API endpoint", "commit", "hook" vb.) Türkçe açıklamayla birlikte yazılmalıdır.
+- Cümle yapısı doğal, öğretici ve akıcı Türkçe olmalıdır.
+- Kullanıcı özellikle istemedikçe İngilizceye geçilmez.
+- Üslup profesyonel, samimi ve öğretici olmalıdır; gerektiğinde mizah ve sade anlatım kullanılabilir.
+
+### Kapsam:
+- 🧠 **Claude Sonnet 4** (Auto-Debug & Copilot Context) → Türkçe analiz raporları
+- 💡 **GitHub Copilot** → Türkçe kod önerileri ve açıklamalar  
+- 🤖 **VS Code AI Extensions** → Türkçe yardım metinleri
+- 🚀 **Google Gemini** (ProCheff entegrasyonu) → Türkçe tarif analizleri
+
