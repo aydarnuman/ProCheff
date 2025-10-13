@@ -1,7 +1,6 @@
-import React from 'react';
-import Link from 'next/link';
+import Link from 'next/link'
 
-export const Navigation: React.FC = () => {
+function Navigation() {
   return (
     <nav className="bg-white shadow-lg">
       <div className="container mx-auto px-4">
@@ -17,6 +16,9 @@ export const Navigation: React.FC = () => {
             </Link>
             <Link href="/create" className="text-gray-600 hover:text-orange-600 transition-colors">
               Tarif Oluştur
+            </Link>
+            <Link href="/planning" className="text-gray-600 hover:text-orange-600 transition-colors">
+              📊 Planlama
             </Link>
             <Link href="/favorites" className="text-gray-600 hover:text-orange-600 transition-colors">
               Favoriler
@@ -36,5 +38,7 @@ export const Navigation: React.FC = () => {
         </div>
       </div>
     </nav>
-  );
-};
+  )
+}
+
+export { Navigation }

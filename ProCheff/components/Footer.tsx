@@ -1,8 +1,7 @@
-import React from 'react';
-import Link from 'next/link';
+import Link from 'next/link'
 
-export const Footer: React.FC = () => {
-  const currentYear = new Date().getFullYear();
+function Footer() {
+  const currentYear = new Date().getFullYear()
   
   return (
     <footer className="bg-gray-800 text-white py-8">
@@ -65,5 +64,7 @@ export const Footer: React.FC = () => {
         </div>
       </div>
     </footer>
-  );
-};
+  )
+}
+
+export { Footer }
