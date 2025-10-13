@@ -1,0 +1,7 @@
+{
+  "terminal.integrated.env.osx": {
+    "ANTHROPIC_API_KEY": "autogen-f53fd8a177eb2fa14a4ba418443a399c",
+    "OPENAI_API_KEY": "autogen-8b3370127cd2a56aa3b60358bb5076b1",
+    "GITHUB_TOKEN": "autogen-850db4109464ecd0eddd11c3111e63c2"
+  }
+}
