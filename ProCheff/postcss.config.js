@@ -1,7 +1,7 @@
-// ✅ Tailwind v4 + Next.js 14.2.33 için doğru PostCSS yapılandırması
+// Fallback: Vercel uyumlu PostCSS yapılandırması
 module.exports = {
   plugins: {
-    '@tailwindcss/postcss': {},
+    tailwindcss: {},
     autoprefixer: {},
   },
 }
