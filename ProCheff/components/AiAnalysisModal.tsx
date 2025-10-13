@@ -25,7 +25,7 @@ const AiAnalysisModal: React.FC<AiAnalysisModalProps> = ({ isOpen, onClose, ownP
   const aiContext = useContext(AiAnalysisContext);
 
   const menus = useMemo(() => ({ "Kendi Menüm": ownPlan, ...institutionalMenus }), [ownPlan, institutionalMenus]);
-  const currentMenu = menus[selectedInstitution];
+  const currentMenu = menus[selectedInstitution as keyof typeof menus];
   
   const currentScope: AnalysisScope = useMemo(() => {
     const now = new Date();

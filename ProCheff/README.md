@@ -187,6 +187,28 @@ const recipes = await apiHelpers.get('/api/recipes');
 - [ ] Beslenme bilgileri
 - [ ] Tarif videoları
 
+## 🚀 Deployment
+
+### Vercel'e Deploy Etme
+
+ProCheff'i Vercel'e deploy etmek için detaylı rehber:
+
+👉 **[VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)** dosyasını inceleyin.
+
+Hızlı başlangıç:
+```bash
+# Vercel CLI ile deploy
+npm i -g vercel
+vercel
+```
+
+Veya Vercel dashboard üzerinden:
+1. https://vercel.com/new adresine gidin
+2. GitHub repository'nizi import edin
+3. Root Directory: `./ProCheff`
+4. Framework: Next.js
+5. Deploy butonuna tıklayın
+
 ## 📝 Lisans
 
 MIT License - Detaylar için LICENSE dosyasına bakınız.

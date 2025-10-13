@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenerativeAI, SchemaType as Type } from "@google/generative-ai";
 import { AnalysisScope, AnalysisSummary, PriceList, Recipe } from '../types';
 
 const analysisSummarySchema = {
@@ -94,17 +94,18 @@ export const performGeminiAnalysis = async (
     `;
 
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
-            config: { 
-                responseMimeType: "application/json", 
-                responseSchema: analysisSummarySchema 
-            },
+        const ai = new GoogleGenerativeAI(process.env.API_KEY || '');
+        const model = ai.getGenerativeModel({ 
+          model: 'gemini-2.0-flash-exp',
+          generationConfig: { 
+            responseMimeType: "application/json", 
+            responseSchema: analysisSummarySchema as any 
+          }
         });
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
         
-        const jsonStr = response.text.trim();
+        const jsonStr = response.text().trim();
         const generatedData = JSON.parse(jsonStr);
 
         // Basic validation

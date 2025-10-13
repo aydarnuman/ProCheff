@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { PriceList, ToastMessage, IngredientPrice, PriceStatus, PriceHistoryRecord, SourceInfo, AiSettings } from '../types';
 import { PRICE_GROUPS, UNITS } from '../constants';
 import Icon from './Icon';
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenerativeAI, SchemaType as Type } from "@google/generative-ai";
 import { getBaseUnit, convertToBaseUnitValue } from '../utils';
 import { getBrandInfo } from '../utils/brandUtils';
 
@@ -301,11 +301,11 @@ const AiPriceReviewModal: React.FC<AiPriceReviewModalProps> = ({ isOpen, onClose
                                                     {sortedSources.map((src, index) => (
                                                         <div key={index} className={`source-row ${index === 0 ? 'is-recommended' : ''}`}>
                                                              {index === 0 && <span className="recommended-badge">✨ Güncel</span>}
-                                                             <Tooltip text={`${getBrandInfo(src.name).name} / ${getBrandInfo(src.brand).name}`}>
+                                                             <Tooltip text={`${getBrandInfo(src.name).name} / ${getBrandInfo(src.brand || "").name}`}>
                                                                 <div className="source-details-group source-brand">
                                                                     <BrandLogo name={src.name} type="store" />
-                                                                    <BrandLogo name={src.brand} type="product" />
-                                                                    <span className="font-medium text-white truncate">{getBrandInfo(src.brand).name}</span>
+                                                                    <BrandLogo name={src.brand || ""} type="product" />
+                                                                    <span className="font-medium text-white truncate">{getBrandInfo(src.brand || "").name}</span>
                                                                 </div>
                                                              </Tooltip>
                                                             <div className="source-details-group source-price">
@@ -379,7 +379,7 @@ const PriceModal: React.FC<PriceModalProps> = ({ isOpen, onClose, onSave, itemTo
              const data = itemToEdit.data;
              const packageSize = data.packageSize || 1;
              const unitPrice = data.status === 'manual' ? data.manualOverridePrice : data.price;
-             const packagePrice = unitPrice !== null ? unitPrice * packageSize : null;
+             const packagePrice = unitPrice !== null && unitPrice !== undefined ? unitPrice * packageSize : null;
 
             return {
                 name: itemToEdit.name,
@@ -747,14 +747,18 @@ const PricesTab: React.FC<PricesTabProps> = ({
       const prompt = `Aşağıdaki gıda malzemelerinin Türkiye'deki güncel perakende satış fiyatlarını (belirtilen paket miktarları için TOPLAM fiyat) araştır. Her malzeme için en az 3, en fazla 5 güvenilir online market veya zincir market (örn: Migros, A101, CarrefourSA, Trendyol, Metro) kaynağı bul. Sonuçları bir JSON dizisi olarak döndür. Her dizi öğesi, 'name' (birebir sağlanan malzeme adı), 'sources' (kaynakları içeren bir dizi) ve varsa 'notes' alanlarına sahip bir nesne olmalıdır. Her kaynak nesnesi 'name' (market adı), 'brand' (ürünün markası), 'price' (o kaynaktaki PAKET fiyatı) ve 'confidence' (0-1 arası güven skoru) içermelidir. Bir malzeme için 3'ten az kaynak bulursan, bulabildiklerinle döndür. Hiç bulamazsan, o malzemeyi yanıta dahil ETME. Sadece JSON şemasına uygun diziyi döndür.\n\nİstenen Malzemeler:\n${itemPrompts.join('\n')}`;
 
       try {
-          const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-          const response = await ai.models.generateContent({
-              model: 'gemini-2.5-flash',
-              contents: prompt,
-              config: { responseMimeType: "application/json", responseSchema: aiPriceSchema },
+          const ai = new GoogleGenerativeAI(process.env.API_KEY || '');
+          const model = ai.getGenerativeModel({ 
+            model: 'gemini-2.0-flash-exp',
+            generationConfig: { 
+              responseMimeType: "application/json", 
+              responseSchema: aiPriceSchema as any 
+            }
           });
+          const result = await model.generateContent(prompt);
+          const response = await result.response;
           
-          const suggestions = processAiResponse(response.text, itemsToUpdate);
+          const suggestions = processAiResponse(response.text(), itemsToUpdate);
 
           if (suggestions.length > 0) {
               setAiSuggestions(suggestions);
@@ -782,14 +786,18 @@ const PricesTab: React.FC<PricesTabProps> = ({
       const prompt = `"${name} ${data.packageSize} ${data.packageUnit}" adlı gıda ürününün Türkiye'deki güncel perakende satış fiyatını (TOPLAM PAKET FİYATI) araştır. En az 3, en fazla 5 güvenilir online market veya zincir market kaynağı bul. Sonucu bir JSON dizisi olarak döndür. Bu dizi SADECE BİR nesne içermelidir. Bu nesne 'name', 'sources' (kaynakları içeren bir dizi) ve varsa 'notes' alanlarına sahip olmalıdır. Her kaynak nesnesi 'name' (market adı), 'brand' (ürünün markası), 'price' ve 'confidence' içermelidir. Hiç kaynak bulamazsan, boş bir dizi döndür. Sadece JSON şemasına uygun diziyi döndür.`;
       
       try {
-          const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-          const response = await ai.models.generateContent({
-              model: 'gemini-2.5-flash',
-              contents: prompt,
-              config: { responseMimeType: "application/json", responseSchema: aiPriceSchema },
+          const ai = new GoogleGenerativeAI(process.env.API_KEY || '');
+          const model = ai.getGenerativeModel({ 
+            model: 'gemini-2.0-flash-exp',
+            generationConfig: { 
+              responseMimeType: "application/json", 
+              responseSchema: aiPriceSchema as any 
+            }
           });
+          const result = await model.generateContent(prompt);
+          const response = await result.response;
           
-          const suggestions = processAiResponse(response.text, [{name, data}]);
+          const suggestions = processAiResponse(response.text(), [{name, data}]);
 
           if (suggestions.length > 0) {
               setAiSuggestions(suggestions);

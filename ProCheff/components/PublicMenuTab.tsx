@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenerativeAI, SchemaType as Type } from "@google/generative-ai";
 import { PublicMenu, PublicRecipe, ToastMessage, Recipe } from '../types';
 import Icon from './Icon';
 
@@ -33,16 +33,21 @@ const publicMenuSchema = {
 
 const generatePublicMenuWithGemini = async (prompt: string): Promise<PublicMenu | null> => {
     try {
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const ai = new GoogleGenerativeAI(process.env.API_KEY || '');
         const systemInstruction = `Sen kamu kurumları için yemek menüleri ve reçeteleri oluşturan bir uzmansın. Görevin, kamu yemek şartnamelerindeki asgari gramajlara ve porsiyon standartlarına harfiyen uymaktır. Yalnızca sağlanan JSON şemasına uygun bir JSON dizisi döndür. Açıklama, yorum veya markdown ekleme. KESİNLİKLE UYULMASI GEREKEN KURALLAR: Her dizi öğesi bir yemeği temsil etmeli ve 'mealName' ile dolu bir 'ingredients' listesi içermelidir. Porsiyon standardı: ana yemek 200–250 g, çorba 250 ml, garnitür 150 g. Etli yemeklerde et 90–120 g; yağ 10–20 g; tuz 2–3 g. Birimler sadece 'g', 'ml', veya 'adet' olmalı. Eksik bilgileri mantıklı bir şekilde tamamla. Çıktıdaki her yemeğin altına “Reçete (Kamu Standartları)” başlığı ekleme, bu sunum katmanında yapılacak.`;
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
-            config: { systemInstruction, responseMimeType: "application/json", responseSchema: publicMenuSchema },
+        const model = ai.getGenerativeModel({ 
+          model: 'gemini-2.0-flash-exp',
+          systemInstruction,
+          generationConfig: { 
+            responseMimeType: "application/json", 
+            responseSchema: publicMenuSchema as any 
+          }
         });
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
 
-        const jsonStr = response.text.trim();
+        const jsonStr = response.text().trim();
         const generatedData = JSON.parse(jsonStr);
         
         if (Array.isArray(generatedData) && generatedData.length > 0) {
