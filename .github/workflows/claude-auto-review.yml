@@ -1,0 +1,33 @@
+name: Claude Auto-Review
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feature/tailwind-v4-stabilization]
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: ProCheff/package-lock.json
+      
+      - name: Install dependencies
+        run: cd ProCheff && npm ci
+      
+      - name: TypeScript Check
+        run: cd ProCheff && npx tsc --noEmit
+      
+      - name: Lint Check
+        run: cd ProCheff && npm run lint
+      
+      - name: Theme Audit
+        run: cd ProCheff && npx tailwindcss --content "app/**/*.{ts,tsx}" --dry-run > theme-check.log
+      
+      - name: Build Test
+        run: cd ProCheff && npm run build
