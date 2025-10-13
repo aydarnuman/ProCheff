@@ -46,6 +46,28 @@ Her main branch'a push otomatik olarak production'a deploy edilir.
 ### 🚀 Geliştirme
 
 ```bash
+# Kurulum
 npm install
+
+# Geliştirme sunucusu
 npm run dev
+
+# VS Code otomatik izinler
+# .vscode/settings.json dosyası mevcut Claude izinlerini otomatik onaylar
+
+# Non-interactive Claude kullanımı
+cp .env.template .env.local
+# .env.local'e ANTHROPIC_API_KEY ekle
+npm run claude "Yeni component ekle"
+```
+
+### 🤖 Claude AI Otomasyonu
+
+```bash
+# API üzerinden otomatik (izin istemiyor)
+export ANTHROPIC_API_KEY="your_key"
+npm run claude "ProCheff'e recipe form component'i ekle"
+
+# VS Code eklentisi otomatik onay (workspace ayarlı)
+# Artık hiç "Allow" sormuyor
 ```

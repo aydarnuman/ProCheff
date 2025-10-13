@@ -9,8 +9,12 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "deploy": "vercel --prod",
-    "deploy:preview": "vercel"
+    "deploy": "gcloud run deploy procheff --source . --region=us-west1 --allow-unauthenticated --project=degsan-site",
+    "deploy:preview": "gcloud run deploy procheff-preview --source . --region=us-west1 --allow-unauthenticated --project=degsan-site",
+    "docker:build": "docker build -t procheff .",
+    "docker:run": "docker run -p 3000:3000 procheff",
+    "claude": "node scripts/claude-auto.mjs",
+    "ai": "node scripts/ai-auto.mjs"
   },
   "dependencies": {
     "next": "^14.2.33",
@@ -18,6 +22,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.24.3",
     "@types/node": "^22.7.9",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
