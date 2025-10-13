@@ -1,0 +1,122 @@
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│         VERCEL DEPLOYMENT FORM - KOPYALA/YAPIŞTIR              │
+│                                                                 │
+│         ProCheff için Hazır Değerler                            │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════
+1️⃣  REPOSITORY SEÇİMİ
+═══════════════════════════════════════════════════════════════════
+
+Repository: aydarnuman/ProCheff
+Branch: main
+
+═══════════════════════════════════════════════════════════════════
+2️⃣  PROJE AYARLARI
+═══════════════════════════════════════════════════════════════════
+
+Project Name:
+pro-cheff
+
+═══════════════════════════════════════════════════════════════════
+3️⃣  FRAMEWORK PRESET
+═══════════════════════════════════════════════════════════════════
+
+Framework Preset: Next.js
+(Otomatik algılanacak, değiştirmeyin)
+
+═══════════════════════════════════════════════════════════════════
+4️⃣  ROOT DIRECTORY
+═══════════════════════════════════════════════════════════════════
+
+Root Directory:
+./ProCheff
+
+═══════════════════════════════════════════════════════════════════
+5️⃣  BUILD COMMAND
+═══════════════════════════════════════════════════════════════════
+
+Build Command:
+next build
+
+═══════════════════════════════════════════════════════════════════
+6️⃣  OUTPUT DIRECTORY
+═══════════════════════════════════════════════════════════════════
+
+Output Directory:
+.next
+
+(Veya "Next.js default" seçeneğini işaretleyin)
+
+═══════════════════════════════════════════════════════════════════
+7️⃣  INSTALL COMMAND
+═══════════════════════════════════════════════════════════════════
+
+Install Command:
+npm install
+
+═══════════════════════════════════════════════════════════════════
+8️⃣  ENVIRONMENT VARIABLES
+═══════════════════════════════════════════════════════════════════
+
+📌 İLK ENVIRONMENT VARIABLE:
+
+Key:
+NEXT_PUBLIC_API_URL
+
+Value:
+https://procheff.app/api
+
+
+📌 İKİNCİ ENVIRONMENT VARIABLE (Opsiyonel):
+
+Key:
+GEMINI_API_KEY
+
+Value:
+[Buraya gerçek Gemini API key'inizi yazın]
+
+
+⚠️  NOT: Eğer gerçek bir Gemini API key'iniz yoksa, bu ikinci
+    environment variable'ı şimdilik boş bırakabilirsiniz.
+    Daha sonra Vercel dashboard'dan ekleyebilirsiniz.
+
+═══════════════════════════════════════════════════════════════════
+9️⃣  DEPLOY BUTONU
+═══════════════════════════════════════════════════════════════════
+
+Tüm bilgileri girdikten sonra:
+
+[Deploy] butonuna tıklayın
+
+═══════════════════════════════════════════════════════════════════
+✅ DEPLOYMENT SONRASI
+═══════════════════════════════════════════════════════════════════
+
+Vercel size otomatik bir URL verecek:
+https://pro-cheff.vercel.app
+
+Custom domain için:
+1. Vercel dashboard → Settings → Domains
+2. procheff.app domain'ini ekleyin
+3. DNS ayarlarını yapın
+
+═══════════════════════════════════════════════════════════════════
+📚 DETAYLI BİLGİ İÇİN
+═══════════════════════════════════════════════════════════════════
+
+📖 VERCEL_DEPLOYMENT.md - Kapsamlı deployment rehberi
+📋 VERCEL_FORM_REFERENCE.md - Hızlı referans kartı
+📊 DEPLOYMENT_SUMMARY.md - Yapılandırma özeti
+
+═══════════════════════════════════════════════════════════════════
+🎯 HIZLI ÖZETBu dosyadaki tüm değerleri Vercel deployment formuna
+   kopyala/yapıştır yapabilirsiniz.
+
+✅ Build başarılı
+✅ TypeScript hataları yok
+✅ Production ready
+
+═══════════════════════════════════════════════════════════════════

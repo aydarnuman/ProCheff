@@ -166,6 +166,38 @@ Vercel dashboard'da izleyebilirsiniz:
 
 ## 🚨 Önemli Notlar
 
+### 🔒 Güvenlik Uyarısı - API Key Kullanımı
+
+**UYARI**: Mevcut kod yapısında API anahtarları client-side component'lerde kullanılıyor. Bu **güvenlik riski** oluşturur çünkü API key'ler browser bundle'ına gömülür ve kullanıcılar tarafından görülebilir.
+
+#### Etkilenen Dosyalar:
+- `components/PricesTab.tsx` - Satır 750, 789
+- `components/PublicMenuTab.tsx` - Satır 36
+- `utils/analysis.ts` - Satır 97
+
+#### Önerilen Çözüm:
+Bu AI çağrılarını **Next.js API Routes**'a taşıyın:
+
+```typescript
+// app/api/ai-price-analysis/route.ts
+export async function POST(request: Request) {
+  const body = await request.json();
+  const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+  // ... AI logic here
+  return Response.json(result);
+}
+
+// Client-side component
+const response = await fetch('/api/ai-price-analysis', {
+  method: 'POST',
+  body: JSON.stringify(data)
+});
+```
+
+Bu yapı API anahtarını server-side'da tutar ve güvenli olur.
+
+> **Not**: Bu güvenlik iyileştirmesi ayrı bir PR'da ele alınmalıdır. Şu anki deployment bu bilinen sınırlama ile çalışır.
+
 ### Backend Server Hakkında
 
 ProCheff'te ayrı bir Express server (`/server` dizini) var. İki seçeneğiniz var:
