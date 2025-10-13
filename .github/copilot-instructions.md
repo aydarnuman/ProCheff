@@ -1,119 +1,15 @@
-# ProCheff – AI Coding Agent Guide
-
-## Big Picture
-
-**Frontend:** Next.js 14 + TypeScript + Tailwind, App Router (/app). Ana modüller: DashboardTab, RecipesTab, PricesTab, PlanTab.
-
-**Backend:** Express (/server) + /api-proxy (Gemini istekleri), CORS ve rate-limit katmanı.
-
-**AI:** GoogleGenAI (Gemini 2.5 Flash). Yanıtlar JSON şemalı ve doğrulanır.
-
-**Shared:** hooks/ (state & form), utils/ (API yardımcıları, tarif hesap/format), brandUtils (logo/marka eşleştirme).
-
-## Dev Akışları
-
-**FE:** `cd ProCheff && npm run dev`
-
-**BE:** `cd ProCheff/server && npm run dev`
-
-**Build:** `npm run build`
-
-**Env:** `.env` → API_KEY / GEMINI_API_KEY (asla koda gömme)
-
-## Proje-Özel Kalıplar
-
-**AI çağrıları:** GoogleGenAI + `responseMimeType:"application/json"` + `responseSchema` (zorunlu).
-
-**Payload küçültme:** Analizlerde yalnız ilgili tarif/fiyatları gönder (bkz. `performGeminiAnalysis`).
-
-**Dayanıklılık:** Ağ çağrılarını `safeCall(fn,{ timeoutMs,retries })` ile sarmala.
-
-**FE↔BE sınırı:** BE kodunu FE'ye import etme; sadece HTTP/Proxy.
-
-**Marka/Logo:** `utils/brandUtils.ts` → `/public/logos/*.`
-
-## Kod Standartları
-
-**İsimlendirme:** Bileşen PascalCase, hook/util camelCase.
-
-**Export:** Bileşenlerde default, util/hook'larda named tercih.
-
-**Tipler:** TS strict; her prop/dönüş tipi yazılı.
-
-**Stil:** Tailwind utility; inline stil yok.
-
-**Alias:** `@/components|hooks|utils|server`.
-
-## Entegrasyon & Veri Akışı
-
-**PricesTab** → Gemini ile fiyat araştırma/öneri; sonuç UI modalları ve geçmişe yazılır.
-
-**PlanTab** → `performGeminiAnalysis(scope, recipes, priceList, monthlyPlan)` ile maliyet analizi; sonucu ekranda özetleyip grafik/tabloları sürer.
-
-**API çağrıları** `utils/apiHelpers.ts` üzerinden (tek yerden hata/süre yönetimi).
-
-## Örnek Kullanımlar
-
-**Güvenli çağrı:**
-```typescript
-const res = await safeCall(async () => 
-  fetch('/api/recipes').then(r => r.json()), 
-  { timeoutMs: 8000, retries: 1 }
-);
-```
-
-**Tipli bileşen:**
-```typescript
-interface LayoutProps { 
-  children: React.ReactNode; 
-  title?: string; 
-  description?: string; 
-}
-
-export default function Layout({ 
-  children, 
-  title='ProCheff', 
-  description='AI-assisted' 
-}: LayoutProps) { 
-  /* … */ 
-}
-```
-
-## Claude/Copilot Beklentisi
-
-**Plan → Patch → Test** formatında öneri üret.
-
-**package.json** dışı bağımlılık önermeyi bırak.
-
-**AI işlerinde** şema doğrulama ekle, payload'ı küçült.
-
-**Tailwind** ve alias kurallarına uy, diff üretirken dosya yollarını doğru ver.
-
----
-
-**Last updated:** Oct 2025
-
-**Key Reminder:** Bu proje Türkiye kullanıcıları için tasarlandığından, yerel mutfak kültürü, malzeme isimleri ve fiyat analizlerinde Türkiye pazarı göz önünde bulundurulmalıdır.
-
+# ProCheff – AI Agent Rehberi
 
 ## 🇹🇷 Kalıcı Türkçe Konuşma Talimatı (Sistem Düzeyi)
-
 Bu proje kapsamında kullanılan tüm yapay zekâ asistanları (Claude Sonnet 4, GitHub Copilot, OpenAI, Google Gemini vb.) varsayılan olarak **Türkçe yanıt vermelidir.**
 
-### Kurallar:
+Kurallar:
 - Yanıt dili daima Türkçe olmalıdır.
 - İngilizce yalnızca kod yorumlarında, değiştirilemeyen API çıktılarında veya sabit hata mesajlarında kullanılabilir.
 - Teknik terimler ("API endpoint", "commit", "hook" vb.) Türkçe açıklamayla birlikte yazılmalıdır.
 - Cümle yapısı doğal, öğretici ve akıcı Türkçe olmalıdır.
 - Kullanıcı özellikle istemedikçe İngilizceye geçilmez.
-- Üslup profesyonel, samimi ve öğretici olmalıdır; gerektiğinde mizah ve sade anlatım kullanılabilir.
-
-### Kapsam:
-- 🧠 **Claude Sonnet 4** (Auto-Debug & Copilot Context) → Türkçe analiz raporları
-- 💡 **GitHub Copilot** → Türkçe kod önerileri ve açıklamalar  
-- 🤖 **VS Code AI Extensions** → Türkçe yardım metinleri
-- 🚀 **Google Gemini** (ProCheff entegrasyonu) → Türkçe tarif analizleri
-
+- Üslup profesyonel, samimi ve öğretici olmalıdır.
 
 ---
 
@@ -121,11 +17,33 @@ Bu proje kapsamında kullanılan tüm yapay zekâ asistanları (Claude Sonnet 4,
 Claude Sonnet 4 ve GitHub Copilot için otomatik işlem izni yapılandırması:
 
 permissions:
-  auto_run: true        # Kod değişikliklerinde otomatik aksiyon
-  auto_review: true     # Claude / Copilot onay sormadan review başlatsın
-  auto_commit: true     # Güvenli değişiklikleri (docs, yml, lint) doğrudan commitle
-  require_confirmation: false  # "Allow" / "Skip" istemesin
-  safe_mode: restricted  # Sadece proje dizininde işlem yap
+  auto_run: true
+  auto_review: true
+  auto_commit: true
+  require_confirmation: false
+  safe_mode: restricted
 
 # Bu ayar, insan onayı gerektiren istekleri devre dışı bırakır.
 # Eğer manuel kontrol istersen, require_confirmation değerini true yap.
+
+## 🧪 Proje & Site Analizi (Özet)
+
+- **Yığın**: Next.js (App Router) + Tailwind v4 + Express proxy.
+- **Çatallanma uyarısı**: Vite konfigürasyonu ile Next komutları bir arada; tek frontend akışına düşürün.
+- **Gizlilik**: API anahtarları asla istemci bundle'ına gömülmez; tüm AI çağrıları `/api-proxy` üstünden.
+- **Tailwind v4**: PostCSS eklentisi `@tailwindcss/postcss` olmalı; derleme hatası buradan gelir.
+- **Sunucu girişi**: `server/index.js` ve `server/server.js`'ten yalnız biri "gerçek" entry olmalı.
+- **AI çağrıları**: `responseMimeType: "application/json"` + şema zorunlu; çıktı mutlaka parse/doğrulanır.
+- **PR Kontrol Listesi**:
+  - [ ] İstemcide gizli env yok (yalnız PUBLIC_*).
+  - [ ] Yeni sayfalar App Router kalıplarını izliyor.
+  - [ ] Ağ çağrıları `safeCall()` ve tek `apiHelpers` üzerinden.
+  - [ ] Tailwind sınıfları kullanılabilir (build başarıyla geçiyor).
+  - [ ] Server loglarında 4xx/5xx pikleri regresyon değil.
+- **Canlı Site Hız Testi** (manuel):
+  - `curl -I https://procheff.app` → 200/301 + HSTS
+  - `npx lighthouse https://procheff.app --view`
+- **Hata Sınıflandırma**:
+  - Derleme hatası → PostCSS/Tailwind uyumu
+  - 401/403 → proxy/auth konfigürasyonu
+  - 5xx → server entry/çevre değişkenleri
