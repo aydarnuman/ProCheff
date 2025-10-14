@@ -8,3 +8,5 @@ export { NutritionModal } from './NutritionModal'
 export type { NutritionModalProps } from './NutritionModal'
 
 export { AIRecipeGenerator } from './AIRecipeGenerator'
+
+export { Modal, StockStatusModal, MenuPlanModal } from './Modal'

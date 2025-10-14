@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { StatCard, Button, BaseCard } from '@/app/components/ui'
-import { CategoryFilter, MenuGrid, NutritionModal, AIRecipeGenerator } from './components'
+import { CategoryFilter, MenuGrid, NutritionModal, AIRecipeGenerator, StockStatusModal, MenuPlanModal } from './components'
 import { menuCategories, menuItems, quickActions } from '@/lib/data/menu-management'
 import { useMenuManagementData } from '@/lib/hooks/useMenuManagementData'
 import { ChefHat, Plus, Settings, TrendingUp, RefreshCw, AlertTriangle } from 'lucide-react'
@@ -12,6 +12,8 @@ export default function MenuManagementPage() {
   const [nutritionModalOpen, setNutritionModalOpen] = useState(false)
   const [selectedItem, setSelectedItem] = useState<{ id: string; title: string } | null>(null)
   const [showAIGenerator, setShowAIGenerator] = useState(false)
+  const [stockModalOpen, setStockModalOpen] = useState(false)
+  const [menuPlanModalOpen, setMenuPlanModalOpen] = useState(false)
   
   const { 
     formattedStats, 
@@ -34,19 +36,36 @@ export default function MenuManagementPage() {
         window.open('/cost-simulator', '_blank')
         break
       case 'stock-status':
-        // Stok durumu modalı göster
-        alert('Stok Durumu: 156 aktif malzeme, 12 kritik seviyede')
+        setStockModalOpen(true)
         break
       case 'new-plan':
-        // Menü planlama modalı
-        alert('Menü Planlama: Yeni plan oluşturma özelliği geliştiriliyor...')
+        setMenuPlanModalOpen(true)
+        break
+      case 'calendar-view':
+        setMenuPlanModalOpen(true)
+        break
+      case 'edit-recipes':
+        alert('Tarif düzenleme sayfası açılıyor...')
+        break
+      case 'categories':
+        alert('Kategori yönetimi sayfası açılıyor...')
         break
       case 'profit-analysis':
-        // Karlılık analizi sayfası
         window.open('/reports', '_blank')
         break
+      case 'generate-report':
+        alert('Rapor oluşturuluyor... PDF indirme başlayacak.')
+        break
+      case 'add-ingredient':
+        alert('Yeni malzeme ekleme formu açılıyor...')
+        break
+      case 'supplier-mgmt':
+        alert('Tedarikçi yönetimi sayfası açılıyor...')
+        break
+      case 'copy-plan':
+        alert('Plan kopyalandı! Yeni hafta için düzenleyebilirsiniz.')
+        break
       default:
-        // Diğer fonksiyonlar için genel modal
         alert(`${action} özelliği yakında eklenecek!`)
     }
   }
@@ -244,6 +263,18 @@ export default function MenuManagementPage() {
           itemTitle={selectedItem.title}
         />
       )}
+
+      {/* Stock Status Modal */}
+      <StockStatusModal
+        isOpen={stockModalOpen}
+        onClose={() => setStockModalOpen(false)}
+      />
+
+      {/* Menu Plan Modal */}
+      <MenuPlanModal
+        isOpen={menuPlanModalOpen}
+        onClose={() => setMenuPlanModalOpen(false)}
+      />
     </div>
   )
 }

@@ -47,6 +47,7 @@ export function MenuCard({ item, onActionClick, className = '' }: MenuCardProps)
             onClick={(e) => {
               e.stopPropagation()
               if (action.status !== 'disabled') {
+                console.log(`Button clicked: ${action.id} for item: ${item.id}`)
                 onActionClick(item.id, action.id)
               }
             }}
