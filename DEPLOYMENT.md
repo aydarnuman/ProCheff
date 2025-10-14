@@ -4,27 +4,63 @@
 
 ProCheff'in Google Cloud Run'da otomatik deploy edilmesi için aşağıdaki GitHub Secrets'ları ayarlayın:
 
-### 1. GCP Service Account Key
+### 1. Service Account Oluşturma
 
-1. **Google Cloud Console'a gidin**: https://console.cloud.google.com
-2. **IAM & Admin > Service Accounts**'a gidin
-3. **CREATE SERVICE ACCOUNT** butonuna tıklayın
-4. Bilgileri doldurun:
-   - **Name**: `procheff-github-actions`
-   - **Description**: `GitHub Actions için ProCheff deployment`
-5. **DONE** butonuna tıklayın
-6. Oluşturulan service account'a tıklayın
-7. **KEYS** sekmesine gidin
-8. **ADD KEY > Create new key** seçin
-9. **JSON** formatını seçip **CREATE** butonuna tıklayın
-10. İndirilen JSON dosyasının içeriğini kopyalayın
+Cloud Shell'de şu komutları çalıştırın:
 
-### 2. Service Account Permissions
+```bash
+# Service account oluşturun
+gcloud iam service-accounts create procheff-github-actions \
+  --display-name="ProCheff GitHub Actions" \
+  --description="GitHub Actions deployment service account" \
+  --project=degsan-site
 
-Service Account'a aşağıdaki rolleri verin:
-- `Cloud Run Developer`
-- `Storage Admin`
-- `Container Registry Service Agent`
+# Gerekli rolleri verin
+gcloud projects add-iam-policy-binding degsan-site \
+  --member="serviceAccount:procheff-github-actions@degsan-site.iam.gserviceaccount.com" \
+  --role="roles/run.developer"
+
+gcloud projects add-iam-policy-binding degsan-site \
+  --member="serviceAccount:procheff-github-actions@degsan-site.iam.gserviceaccount.com" \
+  --role="roles/storage.admin"
+
+gcloud projects add-iam-policy-binding degsan-site \
+  --member="serviceAccount:procheff-github-actions@degsan-site.iam.gserviceaccount.com" \
+  --role="roles/iam.serviceAccountUser"
+```
+
+### 2. Workload Identity Federation
+
+```bash
+# Workload Identity Pool oluşturun
+gcloud iam workload-identity-pools create "github-actions" \
+    --project="degsan-site" \
+    --location="global" \
+    --display-name="GitHub Actions Pool"
+
+# GitHub Provider oluşturun
+gcloud iam workload-identity-pools providers create-oidc "github" \
+    --project="degsan-site" \
+    --location="global" \
+    --workload-identity-pool="github-actions" \
+    --display-name="GitHub provider" \
+    --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.repository=assertion.repository" \
+    --issuer-uri="https://token.actions.githubusercontent.com"
+
+# Service Account impersonation yetkisi
+gcloud iam service-accounts add-iam-policy-binding \
+    procheff-github-actions@degsan-site.iam.gserviceaccount.com \
+    --project="degsan-site" \
+    --role="roles/iam.workloadIdentityUser" \
+    --member="principalSet://iam.googleapis.com/projects/178180503011/locations/global/workloadIdentityPools/github-actions/attribute.repository/aydarnuman/ProCheff"
+
+# Provider ID'yi alın
+gcloud iam workload-identity-pools providers describe "github" \
+    --project="degsan-site" \
+    --location="global" \
+    --workload-identity-pool="github-actions" \
+    --format="value(name)"
+```
 
 ### 3. GitHub Repository Secrets
 
@@ -32,9 +68,9 @@ GitHub repository'nize gidin: **Settings > Secrets and variables > Actions**
 
 Aşağıdaki secret'ı ekleyin:
 
-#### GCP_SERVICE_ACCOUNT_KEY
-- **Name**: `GCP_SERVICE_ACCOUNT_KEY`
-- **Value**: Yukarıda indirdiğiniz JSON dosyasının tüm içeriği
+#### WIF_PROVIDER
+- **Name**: `WIF_PROVIDER`
+- **Value**: Son komuttan aldığınız provider full name (örn: `projects/178180503011/locations/global/workloadIdentityPools/github-actions/providers/github`)
 
 ## 🔧 Deployment Workflow
 

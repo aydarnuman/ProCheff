@@ -8,11 +8,11 @@ on:
 
 env:
   PROJECT_ID: degsan-site
-  REGION: us-central1
+  REGION: us-west1
   SERVICE_NAME: procheff
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
     
     steps:
@@ -34,10 +34,22 @@ jobs:
     - name: Build project
       run: npm run build
 
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    # Sadece main branch push'larında deploy et, PR'larda sadece test et
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v2
       with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}
+        workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+        service_account: procheff-github-actions@degsan-site.iam.gserviceaccount.com
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
@@ -49,4 +61,8 @@ jobs:
           --region=$REGION \
           --allow-unauthenticated \
           --project=$PROJECT_ID \
-          --set-env-vars="NEXT_PUBLIC_APP_URL=https://procheff.app"
+          --memory=1Gi \
+          --cpu=1 \
+          --max-instances=10 \
+          --timeout=300 \
+          --set-env-vars="NODE_ENV=production"
