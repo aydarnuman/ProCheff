@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { StatCard, Button, BaseCard } from '@/app/components/ui'
+import { DataLoadingState, LoadingSpinner } from '@/app/components/ui/Loading'
+import { useNotifications } from '@/app/components/ui/Toast'
 import { CategoryFilter, MenuGrid, NutritionModal, AIRecipeGenerator, StockStatusModal, MenuPlanModal, RecipeEditModal, CategoryManagementModal, AddIngredientModal } from './components'
 import { menuCategories, menuItems, quickActions } from '@/lib/data/menu-management'
 import { useMenuManagementData } from '@/lib/hooks/useMenuManagementData'
@@ -17,6 +19,8 @@ export default function MenuManagementPage() {
   const [recipeEditModalOpen, setRecipeEditModalOpen] = useState(false)
   const [categoryModalOpen, setCategoryModalOpen] = useState(false)
   const [addIngredientModalOpen, setAddIngredientModalOpen] = useState(false)
+  
+  const notifications = useNotifications()
   
   const { 
     formattedStats, 
@@ -34,9 +38,11 @@ export default function MenuManagementPage() {
     switch (action) {
       case 'add-recipe':
         setShowAIGenerator(true)
+        notifications.info('AI Tarif Üretici açıldı')
         break
       case 'cost-calculate':
         window.open('/cost-simulator', '_blank')
+        notifications.info('Maliyet hesaplayıcı yeni sekmede açıldı')
         break
       case 'stock-status':
         setStockModalOpen(true)
@@ -55,26 +61,32 @@ export default function MenuManagementPage() {
         break
       case 'profit-analysis':
         window.open('/reports', '_blank')
+        notifications.info('Kar analizi raporu yeni sekmede açıldı')
         break
       case 'generate-report':
         // PDF rapor oluşturma simülasyonu
-        alert('📄 Maliyet raporu oluşturuluyor...\n\n✅ Tarif maliyetleri analizi\n✅ Karlılık oranları\n✅ Trend grafikleri\n\nPDF indirme 3 saniye içinde başlayacak.')
+        notifications.info('Maliyet raporu hazırlanıyor...', { duration: 3000 })
         setTimeout(() => {
-          alert('📥 maliyet-raporu-' + new Date().toISOString().split('T')[0] + '.pdf indiriliyor...')
+          notifications.success('PDF rapor başarıyla oluşturuldu!', {
+            action: {
+              label: 'İndir',
+              onClick: () => notifications.info('Dosya indiriliyor...')
+            }
+          })
         }, 3000)
         break
       case 'add-ingredient':
         setAddIngredientModalOpen(true)
         break
       case 'supplier-mgmt':
-        alert('🚚 Tedarikçi Yönetimi\n\n📋 Aktif Tedarikçiler: 12\n⚡ Hızlı Sipariş: Mevcut\n📊 Performans Analizi: Hazır\n\nDetaylı tedarikçi sayfası açılıyor...')
+        notifications.info('Tedarikçi yönetimi sayfası açılıyor...')
         break
       case 'copy-plan':
-        alert('📋 Menü planı başarıyla kopyalandı!\n\n✅ Bu haftanın menüsü gelecek haftaya kopyalandı\n🔧 Şimdi yeni haftanın planını düzenleyebilirsiniz\n📅 Değişiklikleri kaydetmeyi unutmayın')
+        notifications.success('Menü planı başarıyla kopyalandı!')
         break
       default:
         console.warn(`Henüz tanımlanmamış action: ${action}`)
-        alert(`⚠️ ${action} özelliği henüz geliştirilme aşamasında.\n\n🔧 Yakında eklenecek özellikler listesine eklendi.`)
+        notifications.warning(`${action} özelliği henüz geliştirilme aşamasında`)
     }
   }
 

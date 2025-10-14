@@ -74,10 +74,10 @@ export default function ReportsPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'ready': return 'text-green-400 bg-green-500/20'
-      case 'processing': return 'text-yellow-400 bg-yellow-500/20'
-      case 'scheduled': return 'text-blue-400 bg-blue-500/20'
-      default: return 'text-gray-400 bg-gray-500/20'
+      case 'ready': return { color: 'var(--status-success)', backgroundColor: 'var(--status-success-bg)' }
+      case 'processing': return { color: 'var(--status-warning)', backgroundColor: 'var(--status-warning-bg)' }
+      case 'scheduled': return { color: 'var(--accent-primary)', backgroundColor: 'var(--bg-accent-subtle)' }
+      default: return { color: 'var(--text-muted)', backgroundColor: 'var(--bg-secondary)' }
     }
   }
 
@@ -152,35 +152,41 @@ export default function ReportsPage() {
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {quickStats.map((stat, index) => (
-          <div
+          <BaseCard
             key={index}
-            className="relative overflow-hidden rounded-2xl bg-gray-800/40 backdrop-blur-xl border border-gray-700/50 p-4"
+            className="relative overflow-hidden p-4"
           >
-            <div className={`absolute inset-0 bg-gradient-to-r ${stat.color} opacity-10`}></div>
+            <div className="absolute inset-0 opacity-10"
+                 style={{ 
+                   background: `linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))` 
+                 }}></div>
             <div className="relative text-center">
-              <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
-              <div className="text-sm text-gray-400 mb-2">{stat.title}</div>
-              <div className="text-xs text-green-400 font-medium">+{stat.change} bu ay</div>
+              <div className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>{stat.value}</div>
+              <div className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>{stat.title}</div>
+              <div className="text-xs font-medium" style={{ color: 'var(--status-success)' }}>+{stat.change} bu ay</div>
             </div>
-          </div>
+          </BaseCard>
         ))}
       </div>
 
       {/* Report Categories */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {reportCategories.map((category) => (
-          <div
+          <BaseCard
             key={category.id}
-            className="bg-gray-800/40 backdrop-blur-xl rounded-3xl border border-gray-700/50 overflow-hidden"
+            className="overflow-hidden"
           >
             
             {/* Category Header */}
-            <div className={`bg-gradient-to-r ${category.gradient} p-6 text-white`}>
+            <div className="p-6" 
+                 style={{ 
+                   background: `linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))` 
+                 }}>
               <div className="flex items-center space-x-3">
                 <div className="text-3xl">{category.icon}</div>
                 <div>
-                  <h3 className="text-xl font-bold">{category.title}</h3>
-                  <p className="text-white/80 text-sm">{category.reports.length} rapor mevcut</p>
+                  <h3 className="text-xl font-bold" style={{ color: 'var(--text-on-accent)' }}>{category.title}</h3>
+                  <p className="text-sm opacity-80" style={{ color: 'var(--text-on-accent)' }}>{category.reports.length} rapor mevcut</p>
                 </div>
               </div>
             </div>
@@ -190,27 +196,39 @@ export default function ReportsPage() {
               {category.reports.map((report, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 bg-gray-700/30 hover:bg-gray-600/40 rounded-xl transition-all duration-300 group cursor-pointer"
+                  className="flex items-center justify-between p-4 rounded-xl transition-all duration-300 group cursor-pointer hover:opacity-80"
+                  style={{ 
+                    backgroundColor: 'var(--bg-tertiary)',
+                    border: `1px solid var(--border-secondary)`
+                  }}
                 >
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-white font-medium">{report.name}</h4>
-                      <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(report.status)}`}>
+                      <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>{report.name}</h4>
+                      <span className="text-xs px-2 py-1 rounded-full" style={getStatusColor(report.status)}>
                         {getStatusLabel(report.status)}
                       </span>
                     </div>
-                    <p className="text-gray-400 text-sm">{report.description}</p>
+                    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{report.description}</p>
                   </div>
                   
                   <div className="flex items-center space-x-2 ml-4">
-                    <button className="p-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg text-blue-400 hover:text-blue-300 transition-colors">
+                    <button className="p-2 rounded-lg transition-colors hover:opacity-80"
+                            style={{ 
+                              backgroundColor: 'var(--bg-accent-subtle)', 
+                              color: 'var(--accent-primary)' 
+                            }}>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                       </svg>
                     </button>
                     
-                    <button className="p-2 bg-green-500/20 hover:bg-green-500/30 rounded-lg text-green-400 hover:text-green-300 transition-colors">
+                    <button className="p-2 rounded-lg transition-colors hover:opacity-80"
+                            style={{ 
+                              backgroundColor: 'var(--status-success-bg)', 
+                              color: 'var(--status-success)' 
+                            }}>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
@@ -220,54 +238,54 @@ export default function ReportsPage() {
               ))}
               
               {/* Generate All Button */}
-              <button className={`
-                w-full p-4 mt-4 rounded-xl bg-gradient-to-r ${category.gradient} 
-                text-white font-medium hover:opacity-90 transition-opacity duration-300
-                flex items-center justify-center space-x-2
-              `}>
+              <button className="w-full p-4 mt-4 rounded-xl font-medium hover:opacity-90 transition-opacity duration-300 flex items-center justify-center space-x-2"
+                      style={{ 
+                        background: `linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))`,
+                        color: 'var(--text-on-accent)'
+                      }}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
                 <span>Tüm Raporları Oluştur</span>
               </button>
             </div>
-          </div>
+          </BaseCard>
         ))}
       </div>
 
       {/* Scheduled Reports */}
-      <div className="mt-8 bg-gray-800/40 backdrop-blur-xl rounded-3xl border border-gray-700/50 p-6">
-        <h3 className="text-white font-bold text-lg mb-4 flex items-center space-x-2">
+      <BaseCard className="mt-8 p-6">
+        <h3 className="font-bold text-lg mb-4 flex items-center space-x-2" style={{ color: 'var(--text-primary)' }}>
           <span>🕒</span>
           <span>Zamanlanmış Raporlar</span>
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="p-4 bg-gray-700/30 rounded-xl">
+          <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-tertiary)' }}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-white font-medium">Haftalık Özet</span>
-              <span className="text-xs text-blue-400">Her Pazartesi</span>
+              <span className="font-medium" style={{ color: 'var(--text-primary)' }}>Haftalık Özet</span>
+              <span className="text-xs" style={{ color: 'var(--accent-primary)' }}>Her Pazartesi</span>
             </div>
-            <p className="text-gray-400 text-sm">Haftalık performans raporu</p>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Haftalık performans raporu</p>
           </div>
           
-          <div className="p-4 bg-gray-700/30 rounded-xl">
+          <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-tertiary)' }}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-white font-medium">Aylık Mali Rapor</span>
-              <span className="text-xs text-green-400">Ayın 1'i</span>
+              <span className="font-medium" style={{ color: 'var(--text-primary)' }}>Aylık Mali Rapor</span>
+              <span className="text-xs" style={{ color: 'var(--status-success)' }}>Ayın 1'i</span>
             </div>
-            <p className="text-gray-400 text-sm">Detaylı finansal analiz</p>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Detaylı finansal analiz</p>
           </div>
           
-          <div className="p-4 bg-gray-700/30 rounded-xl">
+          <div className="p-4 rounded-xl" style={{ backgroundColor: 'var(--bg-tertiary)' }}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-white font-medium">Çeyreklik Trend</span>
-              <span className="text-xs text-purple-400">Her 3 ayda</span>
+              <span className="font-medium" style={{ color: 'var(--text-primary)' }}>Çeyreklik Trend</span>
+              <span className="text-xs" style={{ color: 'var(--accent-secondary)' }}>Her 3 ayda</span>
             </div>
-            <p className="text-gray-400 text-sm">Trend ve pazar analizi</p>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Trend ve pazar analizi</p>
           </div>
         </div>
-      </div>
+      </BaseCard>
     </div>
   )
 }

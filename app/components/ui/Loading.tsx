@@ -174,3 +174,124 @@ export function TableSkeleton({
     </div>
   )
 }
+
+// Chart Loading Skeleton
+export interface ChartSkeletonProps {
+  height?: string
+  className?: string
+}
+
+export function ChartSkeleton({ 
+  height = '300px', 
+  className = '' 
+}: ChartSkeletonProps) {
+  return (
+    <div className={`p-6 rounded-lg ${className}`} style={{ backgroundColor: 'var(--bg-secondary)' }}>
+      <div className="flex items-center justify-between mb-6">
+        <Skeleton width="200px" height="24px" />
+        <Skeleton width="100px" height="32px" />
+      </div>
+      <div className="relative" style={{ height }}>
+        {/* Chart bars simulation */}
+        <div className="absolute bottom-0 left-0 right-0 flex items-end justify-around gap-2">
+          {[60, 80, 45, 90, 70, 55, 85].map((barHeight, i) => (
+            <div 
+              key={i} 
+              className="rounded-t animate-pulse"
+              style={{ 
+                width: '40px', 
+                height: `${barHeight}%`, 
+                backgroundColor: 'var(--bg-tertiary)' 
+              }} 
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Data Loading State with Error Handling
+export interface DataLoadingStateProps {
+  isLoading: boolean
+  error?: string | null
+  isEmpty?: boolean
+  onRetry?: () => void
+  loadingMessage?: string
+  emptyMessage?: string
+  children?: React.ReactNode
+}
+
+export function DataLoadingState({ 
+  isLoading, 
+  error, 
+  isEmpty = false,
+  onRetry,
+  loadingMessage = 'Veriler yükleniyor...',
+  emptyMessage = 'Veri bulunamadı',
+  children
+}: DataLoadingStateProps) {
+  if (isLoading) {
+    return (
+      <div className="text-center py-12">
+        <LoadingSpinner size="lg" />
+        <p className="mt-4" style={{ color: 'var(--text-secondary)' }}>
+          {loadingMessage}
+        </p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-4xl mb-4">⚠️</div>
+        <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--status-error)' }}>
+          Bir hata oluştu
+        </h3>
+        <p className="mb-4" style={{ color: 'var(--text-secondary)' }}>
+          {error}
+        </p>
+        {onRetry && (
+          <button
+            onClick={onRetry}
+            className="px-6 py-2 rounded-lg font-medium text-white hover:opacity-90 transition-opacity"
+            style={{ backgroundColor: 'var(--accent-primary)' }}
+          >
+            Tekrar Dene
+          </button>
+        )}
+      </div>
+    )
+  }
+
+  if (isEmpty) {
+    return (
+      <div className="text-center py-12" style={{ color: 'var(--text-muted)' }}>
+        <div className="text-4xl mb-4">📭</div>
+        <p>{emptyMessage}</p>
+      </div>
+    )
+  }
+
+  return <>{children}</>
+}
+
+// Page Loader
+export interface PageLoaderProps {
+  message?: string
+}
+
+export function PageLoader({ message = 'Sayfa yükleniyor...' }: PageLoaderProps) {
+  return (
+    <div className="min-h-screen flex items-center justify-center" 
+         style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <div className="text-center">
+        <LoadingSpinner size="lg" />
+        <p className="mt-4 text-lg" style={{ color: 'var(--text-secondary)' }}>
+          {message}
+        </p>
+      </div>
+    </div>
+  )
+}
