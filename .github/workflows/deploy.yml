@@ -41,6 +41,10 @@ jobs:
     # Sadece main branch push'larında deploy et, PR'larda sadece test et
     if: github.event_name == 'push'
     
+    permissions:
+      contents: read
+      id-token: write
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
