@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, TrendingUp, TrendingDown, Minus, RefreshCw, MoreHorizontal } from 'lucide-react'
+import { Search, TrendingUp, TrendingDown, Minus, RefreshCw, MoreHorizontal, X, ExternalLink, BarChart3 } from 'lucide-react'
 import { PriceTrackerService, ProductPrice, PriceTrackerFilters } from '@/lib/services/priceTrackerService'
 
 const priceTracker = new PriceTrackerService()
@@ -10,6 +10,8 @@ export default function PriceTrackerPage() {
   const [products, setProducts] = useState<ProductPrice[]>([])
   const [loading, setLoading] = useState(true)
   const [updatingMarkets, setUpdatingMarkets] = useState<Set<string>>(new Set())
+  const [selectedProduct, setSelectedProduct] = useState<ProductPrice | null>(null)
+  const [showDetailModal, setShowDetailModal] = useState(false)
   const [filters, setFilters] = useState<PriceTrackerFilters>({
     searchQuery: ''
   })
@@ -47,6 +49,14 @@ export default function PriceTrackerPage() {
   }
 
   const showDetails = (productId: string) => {
+    const product = products.find(p => p.id === productId)
+    if (product) {
+      setSelectedProduct(product)
+      setShowDetailModal(true)
+    }
+  }
+
+  const openCostSimulator = (productId: string) => {
     const url = `/cost-simulator?product=${productId}`
     window.open(url, '_blank')
   }
@@ -154,6 +164,138 @@ export default function PriceTrackerPage() {
       {!loading && products.length === 0 && (
         <div className="text-center py-12 text-sm" style={{ color: 'var(--text-muted)' }}>
           Ürün bulunamadı
+        </div>
+      )}
+
+      {/* Detay Modal */}
+      {showDetailModal && selectedProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
+          <div 
+            className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl"
+            style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b" style={{ borderColor: 'var(--border-primary)' }}>
+              <div>
+                <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
+                  {selectedProduct.name}
+                </h2>
+                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                  Detaylı Fiyat Analizi
+                </p>
+              </div>
+              <button
+                onClick={() => setShowDetailModal(false)}
+                className="p-2 rounded-lg hover:opacity-80 transition-opacity"
+                style={{ backgroundColor: 'var(--bg-tertiary)' }}
+              >
+                <X className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-6">
+              {/* Fiyat Bilgileri */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-tertiary)' }}>
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>En Düşük Fiyat</p>
+                  <p className="text-2xl font-bold" style={{ color: 'var(--status-success)' }}>
+                    {selectedProduct.cheapestPrice.unitPrice.toFixed(2)}₺
+                  </p>
+                  <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                    {selectedProduct.cheapestPrice.market}
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-tertiary)' }}>
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Ortalama Fiyat</p>
+                  <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                    {selectedProduct.averagePrice.toFixed(2)}₺
+                  </p>
+                  <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                    Tüm marketler
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-tertiary)' }}>
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Trend</p>
+                  <div className="flex items-center gap-2">
+                    {getTrendIcon(selectedProduct.trend)}
+                    <span className="text-xl font-bold" style={{ 
+                      color: selectedProduct.trend.direction === 'up' ? 'var(--status-error)' :
+                             selectedProduct.trend.direction === 'down' ? 'var(--status-success)' : 'var(--text-muted)'
+                    }}>
+                      {selectedProduct.trend.percentage > 0 ? '+' : ''}{selectedProduct.trend.percentage.toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Market Karşılaştırması */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>
+                  Market Karşılaştırması
+                </h3>
+                <div className="space-y-2">
+                  {selectedProduct.markets.map((marketData, index) => (
+                    <div 
+                      key={index}
+                      className="flex items-center justify-between p-3 rounded-lg"
+                      style={{ backgroundColor: 'var(--bg-tertiary)' }}
+                    >
+                      <div>
+                        <span style={{ color: 'var(--text-primary)' }}>{marketData.market}</span>
+                        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                          {marketData.package} ({marketData.amount} {selectedProduct.unit})
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>
+                            {marketData.unitPrice.toFixed(2)}₺
+                          </span>
+                          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                            Toplam: {marketData.price.toFixed(2)}₺
+                          </p>
+                        </div>
+                        {marketData.status === 'cheapest' && (
+                          <span 
+                            className="px-2 py-1 text-xs rounded-full"
+                            style={{ backgroundColor: 'var(--status-success)', color: 'white' }}
+                          >
+                            En Ucuz
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Aksiyon Butonları */}
+              <div className="flex gap-3 pt-4 border-t" style={{ borderColor: 'var(--border-primary)' }}>
+                <button
+                  onClick={() => openCostSimulator(selectedProduct.id)}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-medium transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: 'var(--accent-primary)', color: 'white' }}
+                >
+                  <BarChart3 className="w-4 h-4" />
+                  Maliyet Simülatörü
+                </button>
+                
+                <button
+                  onClick={() => updatePrice(selectedProduct.id)}
+                  disabled={updatingMarkets.has(selectedProduct.id)}
+                  className="px-4 py-3 rounded-lg font-medium transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)' }}
+                >
+                  <RefreshCw className={`w-4 h-4 ${
+                    updatingMarkets.has(selectedProduct.id) ? 'animate-spin' : ''
+                  }`} />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
