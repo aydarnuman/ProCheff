@@ -240,32 +240,79 @@ export default function PriceTrackerPage() {
                   {selectedProduct.markets.map((marketData, index) => (
                     <div 
                       key={index}
-                      className="flex items-center justify-between p-3 rounded-lg"
-                      style={{ backgroundColor: 'var(--bg-tertiary)' }}
+                      className="p-4 rounded-lg border"
+                      style={{ 
+                        backgroundColor: 'var(--bg-tertiary)',
+                        borderColor: marketData.status === 'cheapest' ? 'var(--status-success)' : 'var(--border-primary)'
+                      }}
                     >
-                      <div>
-                        <span style={{ color: 'var(--text-primary)' }}>{marketData.market}</span>
-                        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                          {marketData.package} ({marketData.amount} {selectedProduct.unit})
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="text-right">
-                          <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>
-                            {marketData.unitPrice.toFixed(2)}₺
-                          </span>
-                          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                            Toplam: {marketData.price.toFixed(2)}₺
-                          </p>
+                      {/* Üst satır: Market adı ve durum */}
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-medium" style={{ color: 'var(--text-primary)' }}>
+                            {marketData.market}
+                          </h4>
+                          {marketData.dataSource === 'predicted' && (
+                            <span 
+                              className="px-2 py-1 text-xs rounded-full"
+                              style={{ backgroundColor: 'var(--status-warning)', color: 'white' }}
+                            >
+                              Tahmini
+                            </span>
+                          )}
+                          {marketData.status === 'cheapest' && (
+                            <span 
+                              className="px-2 py-1 text-xs rounded-full"
+                              style={{ backgroundColor: 'var(--status-success)', color: 'white' }}
+                            >
+                              En Ucuz
+                            </span>
+                          )}
                         </div>
-                        {marketData.status === 'cheapest' && (
-                          <span 
-                            className="px-2 py-1 text-xs rounded-full"
-                            style={{ backgroundColor: 'var(--status-success)', color: 'white' }}
-                          >
-                            En Ucuz
+                        <div className="text-right">
+                          <span className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+                            {marketData.unitPrice.toFixed(2)}₺/{selectedProduct.unit}
                           </span>
-                        )}
+                        </div>
+                      </div>
+                      
+                      {/* Alt satır: İki Katmanlı Veri Yapısı */}
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        {/* Sol Kolon: Gerçek Veriler */}
+                        <div>
+                          <p style={{ color: 'var(--text-muted)' }} className="font-medium mb-1">📦 Gerçek Veriler</p>
+                          <p style={{ color: 'var(--text-primary)' }}>Ambalaj: {marketData.package}</p>
+                          <p style={{ color: 'var(--text-primary)' }}>Toplam: {marketData.price.toFixed(2)}₺</p>
+                          <p style={{ color: 'var(--text-primary)' }}>Net: {marketData.amount} {selectedProduct.unit}</p>
+                          {marketData.dataSource && (
+                            <p style={{ color: 'var(--text-muted)' }}>Kaynak: {marketData.dataSource}</p>
+                          )}
+                        </div>
+                        
+                        {/* Sağ Kolon: Hesaplanan Değerler */}
+                        <div>
+                          <p style={{ color: 'var(--text-muted)' }} className="font-medium mb-1">🧮 Formül & Analiz</p>
+                          {marketData.formula && (
+                            <p style={{ color: 'var(--accent-primary)' }} className="font-mono text-xs">
+                              {marketData.formula}
+                            </p>
+                          )}
+                          {marketData.confidenceScore && (
+                            <p style={{ color: 'var(--text-primary)' }}>
+                              Güven: {(marketData.confidenceScore * 100).toFixed(0)}%
+                            </p>
+                          )}
+                          {marketData.priceEfficiency && (
+                            <p style={{ color: 'var(--text-primary)' }}>
+                              Verimlilik: {(marketData.priceEfficiency * 100).toFixed(0)}%
+                            </p>
+                          )}
+                          {marketData.recommendation && (
+                            <p style={{ color: 'var(--text-muted)' }} className="text-xs italic">
+                              💡 {marketData.recommendation}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}

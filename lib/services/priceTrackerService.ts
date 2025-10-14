@@ -30,17 +30,29 @@ export interface ProductPrice {
 }
 
 export interface MarketPriceData {
+  // ⭐ Katman 1: Gerçek Veriler (Ham Kaynak)
   market: string
   package: string
-  price: number
-  amount: number
-  unitPrice: number
-  status: 'cheapest' | 'average' | 'expensive'
-  lastUpdate: string
+  price: number           // Gerçek toplam fiyat
+  amount: number          // Gerçek net ağırlık (kg)
+  lastUpdate: string      // Çekilme tarihi
   isUpdating: boolean
   error?: string
-  isPredicted?: boolean
-  prediction?: PricePrediction
+  
+  // 📊 Katman 2: Hesaplanan Değerler (Formül Tabanlı)
+  unitPrice: number       // = price / amount (₺/kg)
+  status: 'cheapest' | 'average' | 'expensive'  // Karşılaştırmalı durum
+  
+  // 🧮 Ek Meta Veriler 
+  dataSource?: 'scraped' | 'api' | 'manual' | 'predicted'  // Veri kaynağı
+  confidenceScore?: number        // 0.0-1.0 güven skoru
+  formula?: string              // Hesaplama formülü açıklaması
+  isPredicted?: boolean         // Tahmin mi?
+  prediction?: PricePrediction  // Tahmin detayları
+  
+  // 📈 Analitik Alanlar
+  priceEfficiency?: number      // Ambalaj/fiyat verimliliği
+  recommendation?: string       // Sistem önerisi
 }
 
 export interface PriceTrackerFilters {
@@ -217,34 +229,85 @@ export class PriceTrackerService {
         averagePrice: 44.20,
         markets: [
           {
+            // ⭐ Katman 1: Gerçek Veriler
             market: 'BİM',
             package: '800 g',
-            price: 33.56,
-            amount: 0.8,
-            unitPrice: 41.95,
-            status: 'cheapest',
+            price: 33.56,           // Gerçek fiyat
+            amount: 0.8,            // Gerçek net ağırlık
             lastUpdate: '2025-10-14T07:20:00Z',
-            isUpdating: false
+            isUpdating: false,
+            
+            // 📊 Katman 2: Hesaplanan Değerler  
+            unitPrice: 41.95,       // = 33.56 / 0.8
+            status: 'cheapest',
+            
+            // 🧮 Meta Veriler
+            dataSource: 'scraped',
+            confidenceScore: 0.95,
+            formula: '=33.56 / 0.8',
+            priceEfficiency: 0.92,
+            recommendation: 'En uygun seçenek'
           },
           {
+            // ⭐ Katman 1: Gerçek Veriler
             market: 'A101',
             package: '1 kg',
-            price: 44.90,
-            amount: 1.0,
-            unitPrice: 44.90,
-            status: 'average',
+            price: 44.90,           // Gerçek fiyat
+            amount: 1.0,            // Gerçek net ağırlık
             lastUpdate: '2025-10-14T06:45:00Z',
-            isUpdating: false
+            isUpdating: false,
+            
+            // 📊 Katman 2: Hesaplanan Değerler
+            unitPrice: 44.90,       // = 44.90 / 1.0
+            status: 'average',
+            
+            // 🧮 Meta Veriler
+            dataSource: 'api',
+            confidenceScore: 0.93,
+            formula: '=44.90 / 1.0',
+            priceEfficiency: 0.88,
+            recommendation: 'Ortalama fiyat'
           },
           {
+            // ⭐ Katman 1: Gerçek Veriler
             market: 'Migros',
             package: '650 g',
-            price: 29.90,
-            amount: 0.65,
-            unitPrice: 46.00,
-            status: 'expensive',
+            price: 29.90,           // Gerçek fiyat
+            amount: 0.65,           // Gerçek net ağırlık
             lastUpdate: '2025-10-14T05:30:00Z',
-            isUpdating: false
+            isUpdating: false,
+            
+            // 📊 Katman 2: Hesaplanan Değerler
+            unitPrice: 46.00,       // = 29.90 / 0.65
+            status: 'expensive',
+            
+            // 🧮 Meta Veriler
+            dataSource: 'scraped',
+            confidenceScore: 0.88,
+            formula: '=29.90 / 0.65',
+            priceEfficiency: 0.75,
+            recommendation: 'Küçük ambalaj pahalı'
+          },
+          {
+            // ⭐ Katman 1: Gerçek Veriler (Tahmini)
+            market: 'Metro',
+            package: '1.5 kg',
+            price: 38.25,           // Gerçek fiyat (toptan tahmini)
+            amount: 1.5,            // Gerçek net ağırlık
+            lastUpdate: '2025-10-14T04:00:00Z',
+            isUpdating: false,
+            
+            // 📊 Katman 2: Hesaplanan Değerler
+            unitPrice: 25.50,       // = 38.25 / 1.5
+            status: 'cheapest',
+            
+            // 🧮 Meta Veriler
+            dataSource: 'predicted',
+            confidenceScore: 0.70,
+            formula: '=38.25 / 1.5',
+            priceEfficiency: 0.98,
+            recommendation: 'Toptan fiyatı tahmini - doğrulama gerekir',
+            isPredicted: true
           }
         ],
         analysis: {
