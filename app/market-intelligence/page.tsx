@@ -36,8 +36,8 @@ function PriceChart({ prices, selectedCategory }: PriceChartProps) {
             <div className="flex items-center gap-3">
               <div className={`w-3 h-3 rounded-full`} 
                    style={{ 
-                     backgroundColor: price.trend === 'up' ? 'var(--status-error)' : 
-                                    price.trend === 'down' ? 'var(--status-success)' : 'var(--text-muted)'
+                     backgroundColor: price.trend === 'up' ? 'var(--status-success)' : 
+                                    price.trend === 'down' ? 'var(--status-error)' : 'var(--text-muted)'
                    }} />
               <div>
                 <p className="font-medium" style={{ color: 'var(--text-primary)' }}>{price.name}</p>
@@ -88,18 +88,24 @@ function MarketSummaryCard({ summary }: MarketSummaryCardProps) {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg border border-gray-200">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">📈 Piyasa Özeti</h3>
+    <div className="p-6 rounded-lg border" 
+         style={{ 
+           backgroundColor: 'var(--bg-primary)', 
+           borderColor: 'var(--border-primary)' 
+         }}>
+      <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>📈 Piyasa Özeti</h3>
       
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="text-center p-4 bg-blue-50 rounded-lg">
-          <p className="text-2xl font-bold text-blue-600">{summary.totalProducts}</p>
-          <p className="text-sm text-blue-700">Toplam Ürün</p>
+        <div className="text-center p-4 rounded-lg" 
+             style={{ backgroundColor: 'var(--bg-accent-subtle)' }}>
+          <p className="text-2xl font-bold" style={{ color: 'var(--accent-primary)' }}>{summary.totalProducts}</p>
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Toplam Ürün</p>
         </div>
         
-        <div className="text-center p-4 bg-purple-50 rounded-lg">
-          <p className="text-2xl font-bold text-purple-600">{summary.dataFreshness} gün</p>
-          <p className="text-sm text-purple-700">Veri Tazeliği</p>
+        <div className="text-center p-4 rounded-lg" 
+             style={{ backgroundColor: 'var(--bg-accent-subtle)' }}>
+          <p className="text-2xl font-bold" style={{ color: 'var(--accent-primary)' }}>{summary.dataFreshness} gün</p>
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Veri Tazeliği</p>
         </div>
       </div>
 
@@ -118,10 +124,11 @@ function MarketSummaryCard({ summary }: MarketSummaryCardProps) {
       </div>
 
       <div className="mt-6">
-        <h4 className="font-medium text-gray-700 mb-3">Kategori Analizi</h4>
+        <h4 className="font-medium mb-3" style={{ color: 'var(--text-primary)' }}>Kategori Analizi</h4>
         <div className="space-y-2">
           {summary.categories.map((cat, index) => (
-            <div key={index} className="flex items-center justify-between p-2 rounded bg-gray-50">
+            <div key={index} className="flex items-center justify-between p-2 rounded" 
+                 style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <div className="flex items-center gap-2">
                 <span className="text-sm">
                   {cat.category === 'sebze' && '🥕'}
@@ -130,23 +137,25 @@ function MarketSummaryCard({ summary }: MarketSummaryCardProps) {
                   {cat.category === 'süt-ürünleri' && '🥛'}
                   {cat.category === 'tahıl' && '🌾'}
                 </span>
-                <span className="text-sm font-medium capitalize">{cat.category}</span>
-                <span className="text-xs text-gray-500">({cat.productCount} ürün)</span>
+                <span className="text-sm font-medium capitalize" style={{ color: 'var(--text-primary)' }}>{cat.category}</span>
+                <span className="text-xs" style={{ color: 'var(--text-muted)' }}>({cat.productCount} ürün)</span>
               </div>
               
               <div className="flex items-center gap-2">
-                <span className={`text-xs font-medium ${
-                  cat.trend === 'up' ? 'text-red-600' : 
-                  cat.trend === 'down' ? 'text-green-600' : 'text-gray-600'
-                }`}>
+                <span className="text-xs font-medium"
+                      style={{ 
+                        color: cat.trend === 'up' ? 'var(--status-success)' : 
+                               cat.trend === 'down' ? 'var(--status-error)' : 'var(--text-muted)'
+                      }}>
                   {cat.trend === 'up' && '↗️'}
                   {cat.trend === 'down' && '↘️'}
                   {cat.trend === 'stable' && '→'}
                 </span>
-                <span className={`text-sm font-medium ${
-                  cat.avgPriceChange > 0 ? 'text-red-600' : 
-                  cat.avgPriceChange < 0 ? 'text-green-600' : 'text-gray-600'
-                }`}>
+                <span className="text-sm font-medium"
+                      style={{ 
+                        color: cat.avgPriceChange > 0 ? 'var(--status-success)' : 
+                               cat.avgPriceChange < 0 ? 'var(--status-error)' : 'var(--text-muted)'
+                      }}>
                   {cat.avgPriceChange > 0 ? '+' : ''}{cat.avgPriceChange.toFixed(1)}%
                 </span>
               </div>
@@ -169,16 +178,20 @@ function TrendAnalysisCard({ analysis, productName, onProductSearch }: TrendAnal
 
   const getRiskColor = (risk: string) => {
     switch(risk) {
-      case 'high': return 'text-red-600 bg-red-50 border-red-200'
-      case 'medium': return 'text-orange-600 bg-orange-50 border-orange-200'
-      case 'low': return 'text-green-600 bg-green-50 border-green-200'
-      default: return 'text-gray-600 bg-gray-50 border-gray-200'
+      case 'high': return { color: 'var(--status-error)', backgroundColor: 'var(--status-error-bg)', borderColor: 'var(--status-error)' }
+      case 'medium': return { color: 'var(--status-warning)', backgroundColor: 'var(--status-warning-bg)', borderColor: 'var(--status-warning)' }
+      case 'low': return { color: 'var(--status-success)', backgroundColor: 'var(--status-success-bg)', borderColor: 'var(--status-success)' }
+      default: return { color: 'var(--text-muted)', backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-secondary)' }
     }
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg border border-gray-200">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">🎯 Trend Analizi</h3>
+    <div className="p-6 rounded-lg border" 
+         style={{ 
+           backgroundColor: 'var(--bg-primary)', 
+           borderColor: 'var(--border-primary)' 
+         }}>
+      <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>🎯 Trend Analizi</h3>
       
       <div className="mb-4">
         <div className="flex gap-2">
@@ -187,7 +200,12 @@ function TrendAnalysisCard({ analysis, productName, onProductSearch }: TrendAnal
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Ürün adı girin (örn: domates)"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2"
+            style={{ 
+              backgroundColor: 'var(--bg-primary)', 
+              borderColor: 'var(--border-primary)', 
+              color: 'var(--text-primary)'
+            }}
           />
           <button
             onClick={() => onProductSearch(searchInput)}
@@ -224,7 +242,7 @@ function TrendAnalysisCard({ analysis, productName, onProductSearch }: TrendAnal
             </div>
           </div>
 
-          <div className={`p-4 rounded-lg border ${getRiskColor(analysis.riskLevel)}`}>
+          <div className="p-4 rounded-lg border" style={getRiskColor(analysis.riskLevel)}>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-lg">
                 {analysis.riskLevel === 'high' && '🔴'}
@@ -236,10 +254,10 @@ function TrendAnalysisCard({ analysis, productName, onProductSearch }: TrendAnal
             <p className="text-sm opacity-90">{analysis.recommendation}</p>
           </div>
 
-          <div className="bg-blue-50 p-4 rounded-lg">
+          <div className="p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-accent-subtle)' }}>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-blue-700">Güven Skoru</span>
-              <span className="font-semibold text-blue-800">
+              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Güven Skoru</span>
+              <span className="font-semibold" style={{ color: 'var(--accent-primary)' }}>
                 {Math.round(analysis.confidenceScore * 100)}%
               </span>
             </div>
@@ -672,14 +690,23 @@ export default function MarketIntelligencePage() {
 
           {/* Middle Column - Price Chart */}
           <div className="space-y-6">
-            <div className="bg-white p-4 rounded-lg border border-gray-200">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="p-4 rounded-lg border" 
+                 style={{ 
+                   backgroundColor: 'var(--bg-primary)', 
+                   borderColor: 'var(--border-primary)' 
+                 }}>
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>
                 Kategori Filtresi
               </label>
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2"
+                style={{ 
+                  backgroundColor: 'var(--bg-primary)', 
+                  borderColor: 'var(--border-primary)', 
+                  color: 'var(--text-primary)' 
+                }}
               >
                 <option value="all">Tüm Kategoriler</option>
                 <option value="sebze">🥕 Sebze</option>

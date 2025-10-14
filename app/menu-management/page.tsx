@@ -1,398 +1,153 @@
 'use client'
 
 import { useState } from 'react'
-
-const getIcon = (iconName: string) => {
-  const icons: { [key: string]: string } = {
-    'recipe': '🥘',
-    'scale': '⚖️',
-    'calendar': '📅',
-    'box': '📦',
-    'calculator': '💰',
-    'chart': '📊'
-  }
-  return icons[iconName] || '📄'
-}
+import { StatCard, Button, BaseCard } from '@/app/components/ui'
+import { CategoryFilter, MenuGrid, NutritionModal } from './components'
+import { menuCategories, menuItems, quickActions } from '@/lib/data/menu-management'
+import { ChefHat, Plus, Settings, TrendingUp } from 'lucide-react'
 
 export default function MenuManagementPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null)
-  const [selectedModal, setSelectedModal] = useState<string | null>(null)
+  const [nutritionModalOpen, setNutritionModalOpen] = useState(false)
+  const [selectedItem, setSelectedItem] = useState<{ id: string; title: string } | null>(null)
 
-  const categories = [
-    { id: 'all', title: 'Tümü', icon: '🍽️' },
-    { id: 'recipes', title: 'Tarifler', icon: '🥘' },
-    { id: 'menus', title: 'Menüler', icon: '📝' },
-    { id: 'ingredients', title: 'Malzemeler', icon: '🥬' },
-    { id: 'costs', title: 'Maliyetler', icon: '💰' }
-  ]
-
-  const menuItems = [
-    {
-      id: 'recipes-management',
-      title: 'Tarif Yönetimi',
-      icon: 'recipe',
-      count: '247',
-      description: 'Tüm tariflerinizi ve kategorileri yönetin',
-      category: 'recipes',
-      actions: ['Yeni Tarif Ekle', 'Tarifleri Düzenle', 'Kategoriler & Etiketler', 'Arama & Filtre', 'Tarif Şablonları']
-    },
-    {
-      id: 'menu-planning',
-      title: 'Menü Planlama',
-      icon: 'calendar',
-      count: '8',
-      description: 'Haftalık ve aylık menü planları',
-      category: 'menus',
-      actions: ['Yeni Plan Oluştur', 'Şablon Kullan', 'Takvim Görünümü', 'Plan Kopyala', 'Sezonluk Planlar']
-    },
-    {
-      id: 'ingredients-stock',
-      title: 'Stok Takibi',
-      icon: 'box',
-      count: '156',
-      description: 'Malzeme stok durumu',
-      category: 'stock',
-      actions: ['Stok Ekle', 'Minimum Stok Ayarı', 'Tedarikçi Bilgileri', 'Stok Hareketi', 'Envanter Raporu']
-    },
-    {
-      id: 'cost-calculation',
-      title: 'Maliyet Hesaplama',
-      icon: 'calculator',
-      count: '45',
-      description: 'Reçete ve porsiyon maliyetleri',
-      category: 'costs',
-      actions: ['Maliyet Analizi', 'Kar Marjı Hesapla', 'Fiyat Önerisi', 'Maliyet Karşılaştırma', 'Maliyet Raporu']
-    },
-    {
-      id: 'market-prices',
-      title: 'Piyasa Fiyatları',
-      icon: 'chart',
-      count: '89',
-      description: 'Market, toptancı ve piyasa fiyat karşılaştırması',
-      category: 'ingredients',
-      actions: ['Market Fiyatları', 'Toptancı Fiyatları', 'Fiyat Karşılaştır', 'En Ucuz Noktalar', 'Fiyat Takibi']
-    },
-    {
-      id: 'recipe-measurements',
-      title: 'Reçete ve Gramajlar',
-      icon: 'scale',
-      count: '189',
-      description: 'Kalori, besin değerleri ve porsiyon gramajları',
-      category: 'recipes',
-      actions: ['Kalori Hesaplama', 'Besin Değerleri', 'Gramaj Standardı', 'Alerjen Bilgisi', 'Diyet Uyumluluğu'],
-      hasModal: true
+  const handleActionClick = (itemId: string, action: string) => {
+    console.log(`Action: ${action} for item: ${itemId}`)
+    
+    // Beslenme analizi modalını aç
+    if (action.includes('Beslenme') || action.includes('Besin') || action.includes('Kalori')) {
+      const item = menuItems.find(i => i.id === itemId)
+      if (item) {
+        setSelectedItem({ id: item.id, title: item.title })
+        setNutritionModalOpen(true)
+      }
     }
-  ]
+  }
 
-  const filteredItems = selectedCategory === 'all' 
-    ? menuItems 
-    : menuItems.filter(item => item.category === selectedCategory)
+  const handleQuickAction = (actionId: string) => {
+    console.log(`Quick action: ${actionId}`)
+    // Buraya hızlı aksiyonların fonksiyonları gelecek
+  }
+
+  // Toplam istatistikler
+  const totalStats = [
+    { title: 'Toplam Tarif', value: '247', change: '+12', trend: 'up' as const, icon: '🥘' },
+    { title: 'Aktif Menü', value: '8', change: '+2', trend: 'up' as const, icon: '📝' },
+    { title: 'Malzeme Stok', value: '156', change: '-5', trend: 'down' as const, icon: '📦' },
+    { title: 'Aylık Maliyet', value: '₺24.5K', change: '+8%', trend: 'up' as const, icon: '💰' }
+  ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-6">
+    <div className="min-h-screen p-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
       
       {/* Header */}
+      <BaseCard className="mb-8 p-8">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
+                 style={{ backgroundColor: 'var(--bg-accent-subtle)' }}>
+              <ChefHat size={32} style={{ color: 'var(--accent-primary)' }} />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+                Menü Yönetimi Sistemi
+              </h1>
+              <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>
+                Tarifler, menüler ve maliyet yönetimi merkezi
+              </p>
+              <div className="flex items-center gap-2 mt-2 text-sm" style={{ color: 'var(--text-muted)' }}>
+                <Settings size={14} />
+                <span>Otomatik besin analizi • Maliyet hesaplama • Stok entegrasyonu</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex gap-3">
+            <Button 
+              variant="primary" 
+              size="md" 
+              className="flex items-center gap-2"
+              onClick={() => handleQuickAction('add-recipe')}
+            >
+              <Plus size={18} />
+              Yeni Tarif
+            </Button>
+            
+            <Button 
+              variant="secondary" 
+              size="md" 
+              className="flex items-center gap-2"
+              onClick={() => handleQuickAction('analytics')}
+            >
+              <TrendingUp size={18} />
+              Analitik
+            </Button>
+          </div>
+        </div>
+      </BaseCard>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {totalStats.map((stat) => (
+          <StatCard
+            key={stat.title}
+            title={stat.title}
+            value={stat.value}
+            change={stat.change}
+            trend={stat.trend}
+            icon={stat.icon}
+          />
+        ))}
+      </div>
+
+      {/* Quick Actions */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent mb-2">
-          Menü Yönetimi
-        </h1>
-        <p className="text-gray-400">Tarifler, menüler, malzemeler ve maliyet yönetimi</p>
+        <h2 className="text-xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>
+          ⚡ Hızlı İşlemler
+        </h2>
+        <div className="flex flex-wrap gap-3">
+          {quickActions.map((action) => (
+            <Button
+              key={action.id}
+              onClick={() => handleQuickAction(action.id)}
+              icon={action.icon}
+              variant="secondary"
+              className="flex-shrink-0"
+            >
+              {action.title}
+            </Button>
+          ))}
+        </div>
       </div>
 
       {/* Category Filter */}
-      <div className="flex flex-wrap gap-3 mb-8">
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => setSelectedCategory(category.id)}
-            className={`
-              flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300
-              ${selectedCategory === category.id 
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
-                : 'bg-gray-800/40 text-gray-300 hover:bg-gray-700/40 border border-gray-600'
-              }
-            `}
-          >
-            <span>{category.icon}</span>
-            <span className="font-medium">{category.title}</span>
-          </button>
-        ))}
+      <div className="mb-6">
+        <CategoryFilter
+          categories={menuCategories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+        />
       </div>
 
       {/* Menu Items Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredItems.map((item) => (
-          <div
-            key={item.id}
-            className={`
-              relative group cursor-pointer transition-all duration-500 ease-out
-              hover:scale-105 hover:-translate-y-2
-              ${hoveredCard === item.id ? 'shadow-2xl shadow-blue-500/20' : 'shadow-lg'}
-            `}
-            onMouseEnter={() => setHoveredCard(item.id)}
-            onMouseLeave={() => setHoveredCard(null)}
-            onClick={() => item.hasModal && setSelectedModal(item.id)}
-          >
-            {/* Main Card */}
-            <div className="relative overflow-hidden rounded-3xl bg-gray-800/40 backdrop-blur-xl border border-gray-700/50">
-              
-              {/* Header Section */}
-              <div className="bg-gray-800/90 p-6 text-white">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="text-4xl text-blue-400">{getIcon(item.icon)}</div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold">{item.count}</div>
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                <p className="text-gray-300 text-sm">{item.description}</p>
-              </div>
+      <MenuGrid
+        items={menuItems}
+        selectedCategory={selectedCategory}
+        onActionClick={handleActionClick}
+        className="mb-8"
+      />
 
-              {/* Actions Section */}
-              <div className="p-6">
-                <h4 className="text-white font-semibold mb-3">Hızlı İşlemler:</h4>
-                <div className="space-y-2">
-                  {item.actions.map((action, index) => (
-                    <button
-                      key={index}
-                      className="w-full p-3 text-left rounded-lg bg-gray-700/30 hover:bg-gray-600/40 text-gray-300 hover:text-white transition-all duration-300 flex items-center justify-between group"
-                    >
-                      <span className="text-sm font-medium">{action}</span>
-                      <svg 
-                        className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Hover Glow Effect */}
-              <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none"></div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Quick Stats Footer */}
-      <div className="mt-12 grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div className="bg-gray-800/40 backdrop-blur-xl rounded-2xl p-4 border border-gray-700/50 text-center">
-          <div className="text-2xl font-bold text-blue-400">247</div>
-          <div className="text-gray-400 text-sm">Toplam Tarif</div>
-        </div>
-        <div className="bg-gray-800/40 backdrop-blur-xl rounded-2xl p-4 border border-gray-700/50 text-center">
-          <div className="text-2xl font-bold text-green-400">8</div>
-          <div className="text-gray-400 text-sm">Aktif Menü</div>
-        </div>
-        <div className="bg-gray-800/40 backdrop-blur-xl rounded-2xl p-4 border border-gray-700/50 text-center">
-          <div className="text-2xl font-bold text-orange-400">156</div>
-          <div className="text-gray-400 text-sm">Malzeme Stok</div>
-        </div>
-        <div className="bg-gray-800/40 backdrop-blur-xl rounded-2xl p-4 border border-gray-700/50 text-center">
-          <div className="text-2xl font-bold text-yellow-400">89</div>
-          <div className="text-gray-400 text-sm">Piyasa Fiyatı</div>
-        </div>
-        <div className="bg-gray-800/40 backdrop-blur-xl rounded-2xl p-4 border border-gray-700/50 text-center">
-          <div className="text-2xl font-bold text-purple-400">₺24.5K</div>
-          <div className="text-gray-400 text-sm">Aylık Maliyet</div>
-        </div>
-      </div>
-
-      {/* Nutrition & Portion Modal */}
-      {selectedModal === 'nutrition-portion' && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-800 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            
-            {/* Modal Header */}
-            <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-white rounded-t-3xl">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <span className="text-3xl">🍽️</span>
-                  <div>
-                    <h2 className="text-2xl font-bold">Beslenme & Porsiyon Yönetimi</h2>
-                    <p className="text-white/80">Kalori, besin değerleri ve porsiyon kontrolü</p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setSelectedModal(null)}
-                  className="text-white/80 hover:text-white transition-colors"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            {/* Modal Content */}
-            <div className="p-6">
-              {/* Tab Navigation */}
-              <div className="flex flex-wrap gap-2 mb-6">
-                {[
-                  { id: 'nutrition', title: 'Beslenme Bilgileri', icon: '📊' },
-                  { id: 'portions', title: 'Porsiyon Kontrolü', icon: '⚖️' },
-                  { id: 'allergens', title: 'Alerjen Takibi', icon: '⚠️' },
-                  { id: 'diet', title: 'Diyet Uyumluluğu', icon: '🥗' }
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    className="flex items-center space-x-2 px-4 py-2 bg-gray-700/50 hover:bg-gray-600/50 rounded-lg text-gray-300 hover:text-white transition-colors"
-                  >
-                    <span>{tab.icon}</span>
-                    <span>{tab.title}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* Content Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                
-                {/* Kalori Hesaplama */}
-                <div className="bg-gray-700/30 rounded-2xl p-6">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <span className="text-2xl">🔥</span>
-                    <h3 className="text-white font-semibold">Kalori Hesaplama</h3>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400">Toplam Tarif</span>
-                      <span className="text-white font-medium">247</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400">Kalori Hesaplanmış</span>
-                      <span className="text-green-400 font-medium">189</span>
-                    </div>
-                    <button className="w-full mt-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition-colors">
-                      Toplu Hesapla
-                    </button>
-                  </div>
-                </div>
-
-                {/* Besin Değerleri */}
-                <div className="bg-gray-700/30 rounded-2xl p-6">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <span className="text-2xl">🥗</span>
-                    <h3 className="text-white font-semibold">Besin Değerleri</h3>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400">Protein</span>
-                      <span className="text-blue-400">25.4g ort.</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400">Karbonhidrat</span>
-                      <span className="text-green-400">45.2g ort.</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400">Yağ</span>
-                      <span className="text-yellow-400">18.7g ort.</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Porsiyon Standardı */}
-                <div className="bg-gray-700/30 rounded-2xl p-6">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <span className="text-2xl">⚖️</span>
-                    <h3 className="text-white font-semibold">Porsiyon Standardı</h3>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400">Standart Porsiyonlar</span>
-                      <span className="text-white">156</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-400">Uyumluluk Oranı</span>
-                      <span className="text-green-400">95%</span>
-                    </div>
-                    <button className="w-full mt-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-white transition-colors">
-                      Standartları Güncelle
-                    </button>
-                  </div>
-                </div>
-
-                {/* Alerjen Takibi */}
-                <div className="bg-gray-700/30 rounded-2xl p-6">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <span className="text-2xl">⚠️</span>
-                    <h3 className="text-white font-semibold">Alerjen Takibi</h3>
-                  </div>
-                  <div className="space-y-2">
-                    {['Glüten', 'Süt', 'Yumurta', 'Fındık', 'Balık'].map((allergen, index) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <span className="text-gray-400">{allergen}</span>
-                        <span className="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded-full">
-                          {Math.floor(Math.random() * 50) + 10} tarif
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Diyet Uyumluluğu */}
-                <div className="bg-gray-700/30 rounded-2xl p-6">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <span className="text-2xl">🌱</span>
-                    <h3 className="text-white font-semibold">Diyet Uyumluluğu</h3>
-                  </div>
-                  <div className="space-y-2">
-                    {[
-                      { name: 'Vegan', count: 45 },
-                      { name: 'Vejetaryen', count: 78 },
-                      { name: 'Glutensiz', count: 34 },
-                      { name: 'Ketojenik', count: 23 },
-                      { name: 'Düşük Kalori', count: 67 }
-                    ].map((diet, index) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <span className="text-gray-400">{diet.name}</span>
-                        <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full">
-                          {diet.count} tarif
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Raporlar */}
-                <div className="bg-gray-700/30 rounded-2xl p-6">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <span className="text-2xl">📈</span>
-                    <h3 className="text-white font-semibold">Raporlar</h3>
-                  </div>
-                  <div className="space-y-3">
-                    <button className="w-full py-2 bg-gray-600/50 hover:bg-gray-500/50 rounded-lg text-white transition-colors text-sm">
-                      📊 Beslenme Raporu
-                    </button>
-                    <button className="w-full py-2 bg-gray-600/50 hover:bg-gray-500/50 rounded-lg text-white transition-colors text-sm">
-                      ⚖️ Porsiyon Analizi
-                    </button>
-                    <button className="w-full py-2 bg-gray-600/50 hover:bg-gray-500/50 rounded-lg text-white transition-colors text-sm">
-                      ⚠️ Alerjen Raporu
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-700">
-                <button 
-                  onClick={() => setSelectedModal(null)}
-                  className="px-6 py-3 bg-gray-600 hover:bg-gray-700 rounded-xl text-white transition-colors"
-                >
-                  Kapat
-                </button>
-                <button className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:opacity-90 rounded-xl text-white transition-opacity">
-                  Değişiklikleri Kaydet
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Nutrition Modal */}
+      {selectedItem && (
+        <NutritionModal
+          isOpen={nutritionModalOpen}
+          onClose={() => {
+            setNutritionModalOpen(false)
+            setSelectedItem(null)
+          }}
+          itemId={selectedItem.id}
+          itemTitle={selectedItem.title}
+        />
       )}
     </div>
   )

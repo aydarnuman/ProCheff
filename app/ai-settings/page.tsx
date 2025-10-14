@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { BaseCard } from '@/app/components/ui/Card'
+import { Bot, Settings, Zap, DollarSign, Target, Link } from 'lucide-react'
 
 export default function AISettingsPage() {
   const [activeTab, setActiveTab] = useState<string>('models')
@@ -183,35 +185,63 @@ export default function AISettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-6">
+    <div className="min-h-screen p-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
       
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent mb-2">
-          AI Ayarları
-        </h1>
-        <p className="text-gray-400">Yapay zeka modelleri, otomasyonlar ve entegrasyonlar</p>
-      </div>
+      <BaseCard className="mb-8 p-8">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
+               style={{ backgroundColor: 'var(--bg-accent-subtle)' }}>
+            <Bot size={32} style={{ color: 'var(--accent-primary)' }} />
+          </div>
+          <div>
+            <h1 className="text-4xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+              AI Ayarları & Yapılandırma
+            </h1>
+            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>
+              Yapay zeka modelleri, otomasyonlar ve entegrasyonlar
+            </p>
+            <div className="flex items-center gap-2 mt-2 text-sm" style={{ color: 'var(--text-muted)' }}>
+              <Settings size={14} />
+              <span>Model optimizasyonu • Performans izleme • API entegrasyonları</span>
+            </div>
+          </div>
+        </div>
+      </BaseCard>
 
       {/* Tab Navigation */}
-      <div className="flex flex-wrap gap-2 mb-8 bg-gray-800/50 p-2 rounded-2xl">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`
-              flex items-center space-x-2 px-6 py-3 rounded-xl transition-all duration-300
-              ${activeTab === tab.id 
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
-                : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
+      <BaseCard className="mb-8 p-2">
+        <div className="flex flex-wrap gap-2">
+          {tabs.map((tab) => {
+            const getTabIcon = (iconName: string) => {
+              switch(iconName) {
+                case '🤖': return <Bot size={18} />
+                case '🧠': return <Settings size={18} />
+                case '⚡': return <Zap size={18} />
+                case '💰': return <DollarSign size={18} />
+                case '🎯': return <Target size={18} />
+                case '🔗': return <Link size={18} />
+                default: return <Settings size={18} />
               }
-            `}
-          >
-            <span>{tab.icon}</span>
-            <span className="font-medium">{tab.title}</span>
-          </button>
-        ))}
-      </div>
+            }
+            
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className="flex items-center space-x-2 px-6 py-3 rounded-xl transition-all duration-300 font-medium"
+                style={{
+                  backgroundColor: activeTab === tab.id ? 'var(--bg-accent-primary)' : 'transparent',
+                  color: activeTab === tab.id ? 'var(--text-on-accent)' : 'var(--text-secondary)'
+                }}
+              >
+                {getTabIcon(tab.icon)}
+                <span>{tab.title}</span>
+              </button>
+            )
+          })}
+        </div>
+      </BaseCard>
 
       {/* Models Tab */}
       {activeTab === 'models' && (
