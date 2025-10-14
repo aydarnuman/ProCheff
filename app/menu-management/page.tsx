@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { StatCard, Button, BaseCard } from '@/app/components/ui'
-import { DataLoadingState, LoadingSpinner } from '@/app/components/ui/Loading'
-import { useNotifications } from '@/app/components/ui/Toast'
+import { DataLoadingState, LoadingSpinner } from '@/app/components/ui'
+import { useNotifications } from '@/app/components/ui'
 import { CategoryFilter, MenuGrid, NutritionModal, AIRecipeGenerator, StockStatusModal, MenuPlanModal, RecipeEditModal, CategoryManagementModal, AddIngredientModal } from './components'
 import { menuCategories, menuItems, quickActions } from '@/lib/data/menu-management'
 import { useMenuManagementData } from '@/lib/hooks/useMenuManagementData'
