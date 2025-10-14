@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { Search, TrendingUp, TrendingDown, Minus, RefreshCw, MoreHorizontal } from 'lucide-react'
 import { PriceTrackerService, ProductPrice, PriceTrackerFilters } from '@/lib/services/priceTrackerService'
 
 const priceTracker = new PriceTrackerService()
@@ -9,6 +9,7 @@ const priceTracker = new PriceTrackerService()
 export default function PriceTrackerPage() {
   const [products, setProducts] = useState<ProductPrice[]>([])
   const [loading, setLoading] = useState(true)
+  const [updatingMarkets, setUpdatingMarkets] = useState<Set<string>>(new Set())
   const [filters, setFilters] = useState<PriceTrackerFilters>({
     searchQuery: ''
   })
@@ -27,6 +28,27 @@ export default function PriceTrackerPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const updatePrice = async (productId: string) => {
+    try {
+      setUpdatingMarkets(prev => new Set(prev).add(productId))
+      await priceTracker.updateProductPrice(productId)
+      await loadProducts()
+    } catch (error) {
+      console.error('Fiyat güncellenirken hata:', error)
+    } finally {
+      setUpdatingMarkets(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(productId)
+        return newSet
+      })
+    }
+  }
+
+  const showDetails = (productId: string) => {
+    const url = `/cost-simulator?product=${productId}`
+    window.open(url, '_blank')
   }
 
   const getTrendIcon = (trend: ProductPrice['trend']) => {
@@ -79,15 +101,39 @@ export default function PriceTrackerPage() {
                 </span>
               </div>
 
-              {/* Sağ: Trend */}
-              <div className="flex items-center gap-1 ml-3">
-                {getTrendIcon(product.trend)}
-                <span className={`text-xs ${
-                  product.trend.direction === 'up' ? 'text-red-500' :
-                  product.trend.direction === 'down' ? 'text-green-500' : 'text-gray-400'
-                }`}>
-                  {product.trend.percentage > 0 ? '+' : ''}{product.trend.percentage.toFixed(0)}%
-                </span>
+              {/* Sağ: Trend ve İkonlar */}
+              <div className="flex items-center gap-2 ml-3">
+                <div className="flex items-center gap-1">
+                  {getTrendIcon(product.trend)}
+                  <span className={`text-xs ${
+                    product.trend.direction === 'up' ? 'text-red-500' :
+                    product.trend.direction === 'down' ? 'text-green-500' : 'text-gray-400'
+                  }`}>
+                    {product.trend.percentage > 0 ? '+' : ''}{product.trend.percentage.toFixed(0)}%
+                  </span>
+                </div>
+
+                {/* İkonlar */}
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => updatePrice(product.id)}
+                    disabled={updatingMarkets.has(product.id)}
+                    className="p-0.5 hover:bg-gray-200 rounded transition-colors"
+                    title="Fiyat Güncelle"
+                  >
+                    <RefreshCw className={`w-3 h-3 text-gray-600 ${
+                      updatingMarkets.has(product.id) ? 'animate-spin' : ''
+                    }`} />
+                  </button>
+
+                  <button
+                    onClick={() => showDetails(product.id)}
+                    className="p-0.5 hover:bg-gray-200 rounded transition-colors"
+                    title="Detaylar"
+                  >
+                    <MoreHorizontal className="w-3 h-3 text-gray-600" />
+                  </button>
+                </div>
               </div>
             </div>
           ))}
