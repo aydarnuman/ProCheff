@@ -52,87 +52,97 @@ export default function PriceTrackerPage() {
   }
 
   const getTrendIcon = (trend: ProductPrice['trend']) => {
-    if (trend.direction === 'up') return <TrendingUp className="w-3 h-3 text-red-500" />
-    if (trend.direction === 'down') return <TrendingDown className="w-3 h-3 text-green-500" />
-    return <Minus className="w-3 h-3 text-gray-400" />
+    if (trend.direction === 'up') return <TrendingUp className="w-4 h-4" style={{ color: 'var(--status-error)' }} />
+    if (trend.direction === 'down') return <TrendingDown className="w-4 h-4" style={{ color: 'var(--status-success)' }} />
+    return <Minus className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="p-2 max-w-4xl mx-auto">
-        {/* Minimal Header */}
-        <div className="flex items-center gap-3 mb-3">
-        <h1 className="text-base font-medium text-gray-800">💰 Fiyat Takip</h1>
-        <div className="relative flex-1 max-w-xs">
-          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400" />
+    <div className="p-6 max-w-6xl mx-auto">
+      {/* Minimal Header */}
+      <div className="flex items-center gap-4 mb-6">
+        <h1 className="text-xl font-medium" style={{ color: 'var(--text-primary)' }}>💰 Fiyat Takip</h1>
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-muted)' }} />
           <input
             type="text"
-            placeholder="Ara..."
+            placeholder="Ürün ara..."
             value={filters.searchQuery || ''}
             onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
-            className="w-full pl-7 pr-2 py-1 text-xs text-gray-800 bg-white border border-gray-300 rounded focus:outline-none focus:border-blue-400 placeholder:text-gray-400"
+            className="w-full pl-10 pr-4 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            style={{ 
+              backgroundColor: 'var(--bg-secondary)', 
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border-primary)'
+            }}
           />
         </div>
       </div>
 
       {/* Liste */}
       {loading ? (
-        <div className="text-center py-4 text-xs text-gray-600">Yükleniyor...</div>
+        <div className="text-center py-8 text-sm" style={{ color: 'var(--text-secondary)' }}>Yükleniyor...</div>
       ) : (
-        <div className="space-y-0.5">
+        <div className="space-y-2">
           {products.map((product) => (
             <div
               key={product.id}
-              className="flex items-center justify-between py-1 px-2 text-xs hover:bg-gray-50 rounded"
+              className="flex items-center justify-between py-3 px-4 text-sm rounded-lg transition-colors"
+              style={{ 
+                backgroundColor: 'var(--bg-secondary)',
+                border: '1px solid var(--border-primary)'
+              }}
             >
               {/* Sol: Ürün */}
               <div className="flex-1 min-w-0">
-                <span className="font-medium text-gray-800 truncate block">
+                <span className="font-medium truncate block" style={{ color: 'var(--text-primary)' }}>
                   {product.name}
                 </span>
               </div>
 
               {/* Orta: Fiyat */}
-              <div className="flex items-center gap-3 text-xs">
-                <span className="text-green-600 font-semibold">
+              <div className="flex items-center gap-4 text-sm">
+                <span className="font-semibold" style={{ color: 'var(--status-success)' }}>
                   {product.cheapestPrice.unitPrice.toFixed(2)}₺
                 </span>
-                <span className="text-gray-500">
+                <span style={{ color: 'var(--text-secondary)' }}>
                   ort: {product.averagePrice.toFixed(2)}₺
                 </span>
               </div>
 
               {/* Sağ: Trend ve İkonlar */}
               <div className="flex items-center gap-2 ml-3">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                   {getTrendIcon(product.trend)}
-                  <span className={`text-xs ${
-                    product.trend.direction === 'up' ? 'text-red-500' :
-                    product.trend.direction === 'down' ? 'text-green-500' : 'text-gray-400'
-                  }`}>
+                  <span className="text-sm" style={{ 
+                    color: product.trend.direction === 'up' ? 'var(--status-error)' :
+                           product.trend.direction === 'down' ? 'var(--status-success)' : 'var(--text-muted)'
+                  }}>
                     {product.trend.percentage > 0 ? '+' : ''}{product.trend.percentage.toFixed(0)}%
                   </span>
                 </div>
 
                 {/* İkonlar */}
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => updatePrice(product.id)}
                     disabled={updatingMarkets.has(product.id)}
-                    className="p-0.5 hover:bg-gray-200 rounded transition-colors"
+                    className="p-2 rounded-md transition-colors hover:opacity-80"
+                    style={{ backgroundColor: 'var(--bg-tertiary)' }}
                     title="Fiyat Güncelle"
                   >
-                    <RefreshCw className={`w-3 h-3 text-gray-600 ${
+                    <RefreshCw className={`w-4 h-4 ${
                       updatingMarkets.has(product.id) ? 'animate-spin' : ''
-                    }`} />
+                    }`} style={{ color: 'var(--text-secondary)' }} />
                   </button>
 
                   <button
                     onClick={() => showDetails(product.id)}
-                    className="p-0.5 hover:bg-gray-200 rounded transition-colors"
+                    className="p-2 rounded-md transition-colors hover:opacity-80"
+                    style={{ backgroundColor: 'var(--bg-tertiary)' }}
                     title="Detaylar"
                   >
-                    <MoreHorizontal className="w-3 h-3 text-gray-600" />
+                    <MoreHorizontal className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
                   </button>
                 </div>
               </div>
@@ -141,12 +151,11 @@ export default function PriceTrackerPage() {
         </div>
       )}
 
-        {!loading && products.length === 0 && (
-          <div className="text-center py-6 text-xs text-gray-400">
-            Ürün bulunamadı
-          </div>
-        )}
-      </div>
+      {!loading && products.length === 0 && (
+        <div className="text-center py-12 text-sm" style={{ color: 'var(--text-muted)' }}>
+          Ürün bulunamadı
+        </div>
+      )}
     </div>
   )
 }
