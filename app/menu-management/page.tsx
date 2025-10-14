@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { StatCard, Button, BaseCard } from '@/app/components/ui'
-import { CategoryFilter, MenuGrid, NutritionModal, AIRecipeGenerator, StockStatusModal, MenuPlanModal } from './components'
+import { CategoryFilter, MenuGrid, NutritionModal, AIRecipeGenerator, StockStatusModal, MenuPlanModal, RecipeEditModal, CategoryManagementModal, AddIngredientModal } from './components'
 import { menuCategories, menuItems, quickActions } from '@/lib/data/menu-management'
 import { useMenuManagementData } from '@/lib/hooks/useMenuManagementData'
 import { ChefHat, Plus, Settings, TrendingUp, RefreshCw, AlertTriangle } from 'lucide-react'
@@ -14,6 +14,9 @@ export default function MenuManagementPage() {
   const [showAIGenerator, setShowAIGenerator] = useState(false)
   const [stockModalOpen, setStockModalOpen] = useState(false)
   const [menuPlanModalOpen, setMenuPlanModalOpen] = useState(false)
+  const [recipeEditModalOpen, setRecipeEditModalOpen] = useState(false)
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false)
+  const [addIngredientModalOpen, setAddIngredientModalOpen] = useState(false)
   
   const { 
     formattedStats, 
@@ -45,28 +48,33 @@ export default function MenuManagementPage() {
         setMenuPlanModalOpen(true)
         break
       case 'edit-recipes':
-        alert('Tarif düzenleme sayfası açılıyor...')
+        setRecipeEditModalOpen(true)
         break
       case 'categories':
-        alert('Kategori yönetimi sayfası açılıyor...')
+        setCategoryModalOpen(true)
         break
       case 'profit-analysis':
         window.open('/reports', '_blank')
         break
       case 'generate-report':
-        alert('Rapor oluşturuluyor... PDF indirme başlayacak.')
+        // PDF rapor oluşturma simülasyonu
+        alert('📄 Maliyet raporu oluşturuluyor...\n\n✅ Tarif maliyetleri analizi\n✅ Karlılık oranları\n✅ Trend grafikleri\n\nPDF indirme 3 saniye içinde başlayacak.')
+        setTimeout(() => {
+          alert('📥 maliyet-raporu-' + new Date().toISOString().split('T')[0] + '.pdf indiriliyor...')
+        }, 3000)
         break
       case 'add-ingredient':
-        alert('Yeni malzeme ekleme formu açılıyor...')
+        setAddIngredientModalOpen(true)
         break
       case 'supplier-mgmt':
-        alert('Tedarikçi yönetimi sayfası açılıyor...')
+        alert('🚚 Tedarikçi Yönetimi\n\n📋 Aktif Tedarikçiler: 12\n⚡ Hızlı Sipariş: Mevcut\n📊 Performans Analizi: Hazır\n\nDetaylı tedarikçi sayfası açılıyor...')
         break
       case 'copy-plan':
-        alert('Plan kopyalandı! Yeni hafta için düzenleyebilirsiniz.')
+        alert('📋 Menü planı başarıyla kopyalandı!\n\n✅ Bu haftanın menüsü gelecek haftaya kopyalandı\n🔧 Şimdi yeni haftanın planını düzenleyebilirsiniz\n📅 Değişiklikleri kaydetmeyi unutmayın')
         break
       default:
-        alert(`${action} özelliği yakında eklenecek!`)
+        console.warn(`Henüz tanımlanmamış action: ${action}`)
+        alert(`⚠️ ${action} özelliği henüz geliştirilme aşamasında.\n\n🔧 Yakında eklenecek özellikler listesine eklendi.`)
     }
   }
 
@@ -274,6 +282,24 @@ export default function MenuManagementPage() {
       <MenuPlanModal
         isOpen={menuPlanModalOpen}
         onClose={() => setMenuPlanModalOpen(false)}
+      />
+
+      {/* Recipe Edit Modal */}
+      <RecipeEditModal
+        isOpen={recipeEditModalOpen}
+        onClose={() => setRecipeEditModalOpen(false)}
+      />
+
+      {/* Category Management Modal */}
+      <CategoryManagementModal
+        isOpen={categoryModalOpen}
+        onClose={() => setCategoryModalOpen(false)}
+      />
+
+      {/* Add Ingredient Modal */}
+      <AddIngredientModal
+        isOpen={addIngredientModalOpen}
+        onClose={() => setAddIngredientModalOpen(false)}
       />
     </div>
   )
