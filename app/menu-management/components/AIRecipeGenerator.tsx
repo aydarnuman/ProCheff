@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { BaseCard } from '@/app/components/ui/Card'
+import { useNotifications } from '@/app/components/ui'
 import { ChefHat, Sparkles, Clock, Users, Calculator, Lightbulb } from 'lucide-react'
 
 interface RecipeIngredient {
@@ -34,6 +35,7 @@ interface AIRecipeGeneratorProps {
 }
 
 export function AIRecipeGenerator({ onRecipeGenerated }: AIRecipeGeneratorProps) {
+  const { success, error } = useNotifications()
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedRecipe, setGeneratedRecipe] = useState<GeneratedRecipe | null>(null)
   const [formData, setFormData] = useState({
@@ -47,51 +49,55 @@ export function AIRecipeGenerator({ onRecipeGenerated }: AIRecipeGeneratorProps)
   })
 
   const generateRecipe = async () => {
+    if (!formData.dishName.trim()) {
+      error('Lütfen yemek adını giriniz!')
+      return
+    }
+
     setIsGenerating(true)
     
     try {
-      // Simulated AI recipe generation - gerçek implementasyonda API çağrısı olacak
-      await new Promise(resolve => setTimeout(resolve, 3000)) // 3 saniye simülasyon
-      
-      const recipe: GeneratedRecipe = {
-        name: formData.dishName || 'AI Önerisi: Sebzeli Tavuk Sote',
-        description: 'Taze sebzelerle hazırlanmış lezzetli ve besleyici tavuk sote',
-        cookingTime: 35,
-        servings: formData.servings,
-        difficulty: formData.difficulty,
-        ingredients: [
-          { name: 'Tavuk göğsü', amount: 500, unit: 'gram', category: 'et' },
-          { name: 'Domates', amount: 2, unit: 'adet', category: 'sebze' },
-          { name: 'Soğan', amount: 1, unit: 'adet', category: 'sebze' },
-          { name: 'Biber', amount: 2, unit: 'adet', category: 'sebze' },
-          { name: 'Zeytinyağı', amount: 30, unit: 'ml', category: 'yağ' },
-          { name: 'Tuz', amount: 5, unit: 'gram', category: 'baharat' },
-          { name: 'Karabiber', amount: 2, unit: 'gram', category: 'baharat' }
-        ],
-        instructions: [
-          'Tavuk göğsünü küp küp doğrayın',
-          'Sebzeleri ince ince dilimleyin',
-          'Tavada zeytinyağını ısıtın',
-          'Tavukları soteleyin (8-10 dk)',
-          'Sebzeleri ekleyin ve karıştırın',
-          'Baharat ekleyip 15 dakika pişirin',
-          'Sıcak servis yapın'
-        ],
-        nutritionInfo: {
-          calories: 280,
-          protein: 32,
-          carbs: 12,
-          fat: 8
+      // Gerçek AI API çağrısı
+      const response = await fetch('/api/ai/generate-recipe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        estimatedCost: parseFloat(formData.maxCost) || 45.50,
-        tags: ['Sağlıklı', 'Protein', 'Az Yağlı', 'Hızlı']
+        body: JSON.stringify({
+          prompt: `${formData.dishName} tarifi oluştur`,
+          dishName: formData.dishName,
+          servings: formData.servings,
+          maxCost: parseFloat(formData.maxCost) || undefined,
+          difficulty: formData.difficulty,
+          cuisine: formData.cuisine,
+          dietaryRestrictions: formData.dietaryRestrictions,
+          availableIngredients: formData.availableIngredients
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('API çağrısı başarısız')
+      }
+
+      const result = await response.json()
+      
+      if (result.success && result.data) {
+        const recipe: GeneratedRecipe = {
+          ...result.data,
+          servings: formData.servings,
+          difficulty: formData.difficulty
+        }
+        
+        setGeneratedRecipe(recipe)
+        onRecipeGenerated?.(recipe)
+        success(`${recipe.name} tarifi başarıyla oluşturuldu!`)
+      } else {
+        throw new Error(result.error || 'Tarif üretilemedi')
       }
       
-      setGeneratedRecipe(recipe)
-      onRecipeGenerated?.(recipe)
-      
-    } catch (error) {
-      console.error('Recipe generation failed:', error)
+    } catch (err) {
+      console.error('Recipe generation failed:', err)
+      error(`Tarif oluşturulamadı: ${err instanceof Error ? err.message : 'Bilinmeyen hata'}`)
     } finally {
       setIsGenerating(false)
     }
@@ -105,7 +111,7 @@ export function AIRecipeGenerator({ onRecipeGenerated }: AIRecipeGeneratorProps)
       await new Promise(resolve => setTimeout(resolve, 1000))
       
       // Başarı mesajı
-      alert('Tarif başarıyla kaydedildi!')
+      success(`${generatedRecipe.name} başarıyla menüye eklendi!`)
       
       // Formu temizle
       setGeneratedRecipe(null)
@@ -119,9 +125,9 @@ export function AIRecipeGenerator({ onRecipeGenerated }: AIRecipeGeneratorProps)
         difficulty: 'Orta'
       })
       
-    } catch (error) {
-      console.error('Recipe save failed:', error)
-      alert('Tarif kaydedilirken hata oluştu!')
+    } catch (err) {
+      console.error('Recipe save failed:', err)
+      error('Tarif kaydedilirken hata oluştu!')
     }
   }
 
