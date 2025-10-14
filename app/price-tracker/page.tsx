@@ -58,10 +58,11 @@ export default function PriceTrackerPage() {
   }
 
   return (
-    <div className="p-2 max-w-4xl mx-auto">
-      {/* Minimal Header */}
-      <div className="flex items-center gap-3 mb-3">
-        <h1 className="text-base font-medium">💰 Fiyat Takip</h1>
+    <div className="min-h-screen bg-white">
+      <div className="p-2 max-w-4xl mx-auto">
+        {/* Minimal Header */}
+        <div className="flex items-center gap-3 mb-3">
+        <h1 className="text-base font-medium text-gray-800">💰 Fiyat Takip</h1>
         <div className="relative flex-1 max-w-xs">
           <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400" />
           <input
@@ -69,14 +70,14 @@ export default function PriceTrackerPage() {
             placeholder="Ara..."
             value={filters.searchQuery || ''}
             onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
-            className="w-full pl-7 pr-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:border-blue-400"
+            className="w-full pl-7 pr-2 py-1 text-xs text-gray-800 bg-white border border-gray-300 rounded focus:outline-none focus:border-blue-400 placeholder:text-gray-400"
           />
         </div>
       </div>
 
       {/* Liste */}
       {loading ? (
-        <div className="text-center py-4 text-xs text-gray-500">Yükleniyor...</div>
+        <div className="text-center py-4 text-xs text-gray-600">Yükleniyor...</div>
       ) : (
         <div className="space-y-0.5">
           {products.map((product) => (
@@ -86,7 +87,7 @@ export default function PriceTrackerPage() {
             >
               {/* Sol: Ürün */}
               <div className="flex-1 min-w-0">
-                <span className="font-medium text-gray-900 truncate block">
+                <span className="font-medium text-gray-800 truncate block">
                   {product.name}
                 </span>
               </div>
@@ -140,11 +141,12 @@ export default function PriceTrackerPage() {
         </div>
       )}
 
-      {!loading && products.length === 0 && (
-        <div className="text-center py-6 text-xs text-gray-400">
-          Ürün bulunamadı
-        </div>
-      )}
+        {!loading && products.length === 0 && (
+          <div className="text-center py-6 text-xs text-gray-400">
+            Ürün bulunamadı
+          </div>
+        )}
+      </div>
     </div>
   )
 }
