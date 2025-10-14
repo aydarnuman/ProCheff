@@ -36,15 +36,15 @@ export default function SpecDatabasePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+          <h1 className="text-4xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>
             🗄️ Şartname Veritabanı
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg" style={{ color: 'var(--text-muted)' }}>
             AI destekli kurum profili analizi ve benzerlik veritabanı
           </p>
         </div>
@@ -54,46 +54,64 @@ export default function SpecDatabasePage() {
             {/* Quick Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
               
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="rounded-xl shadow-sm border p-6" 
+                   style={{ 
+                     backgroundColor: 'var(--bg-secondary)', 
+                     borderColor: 'var(--border-primary)' 
+                   }}>
                 <div className="flex items-center justify-between mb-3">
                   <div className="text-3xl">📊</div>
-                  <div className="text-xs text-blue-600 font-medium">TOPLAM</div>
+                  <div className="text-xs font-medium" style={{ color: 'var(--accent-primary)' }}>TOPLAM</div>
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">{stats.totalRecords}</div>
-                <div className="text-sm text-gray-500">Kayıtlı Şartname</div>
+                <div className="text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
+                  {stats.totalRecords}
+                </div>
+                <div className="text-sm" style={{ color: 'var(--text-muted)' }}>Kayıtlı Şartname</div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="rounded-xl shadow-sm border p-6" 
+                   style={{ 
+                     backgroundColor: 'var(--bg-secondary)', 
+                     borderColor: 'var(--border-primary)' 
+                   }}>
                 <div className="flex items-center justify-between mb-3">
                   <div className="text-3xl">👥</div>
-                  <div className="text-xs text-green-600 font-medium">ORTALAMA</div>
+                  <div className="text-xs font-medium" style={{ color: 'var(--status-success)' }}>ORTALAMA</div>
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">
+                <div className="text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
                   {Math.round(stats.averagePersonCount)}
                 </div>
-                <div className="text-sm text-gray-500">Kişi Sayısı</div>
+                <div className="text-sm" style={{ color: 'var(--text-muted)' }}>Kişi Sayısı</div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="rounded-xl shadow-sm border p-6" 
+                   style={{ 
+                     backgroundColor: 'var(--bg-secondary)', 
+                     borderColor: 'var(--border-primary)' 
+                   }}>
                 <div className="flex items-center justify-between mb-3">
                   <div className="text-3xl">📍</div>
-                  <div className="text-xs text-purple-600 font-medium">BÖLGE</div>
+                  <div className="text-xs font-medium" style={{ color: 'var(--status-warning)' }}>BÖLGE</div>
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">
+                <div className="text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
                   {Object.keys(stats.byRegion).length}
                 </div>
-                <div className="text-sm text-gray-500">Farklı Şehir</div>
+                <div className="text-sm" style={{ color: 'var(--text-muted)' }}>Farklı Şehir</div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="rounded-xl shadow-sm border p-6" 
+                   style={{ 
+                     backgroundColor: 'var(--bg-secondary)', 
+                     borderColor: 'var(--border-primary)' 
+                   }}>
                 <div className="flex items-center justify-between mb-3">
                   <div className="text-3xl">🏢</div>
-                  <div className="text-xs text-orange-600 font-medium">TİP</div>
+                  <div className="text-xs font-medium" style={{ color: 'var(--status-error)' }}>TİP</div>
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">
+                <div className="text-3xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
                   {Object.keys(stats.byInstitutionType).length}
                 </div>
-                <div className="text-sm text-gray-500">Kurum Tipi</div>
+                <div className="text-sm" style={{ color: 'var(--text-muted)' }}>Kurum Tipi</div>
               </div>
             </div>
 
@@ -101,8 +119,14 @@ export default function SpecDatabasePage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
               
               {/* Region Distribution */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-xl font-semibold mb-6 text-gray-900">📍 Bölge Dağılımı</h3>
+              <div className="rounded-xl shadow-sm border p-6" 
+                   style={{ 
+                     backgroundColor: 'var(--bg-secondary)', 
+                     borderColor: 'var(--border-primary)' 
+                   }}>
+                <h3 className="text-xl font-semibold mb-6" style={{ color: 'var(--text-primary)' }}>
+                  📍 Bölge Dağılımı
+                </h3>
                 
                 {Object.keys(stats.byRegion).length > 0 ? (
                   <div className="space-y-4">
@@ -113,15 +137,21 @@ export default function SpecDatabasePage() {
                         return (
                           <div key={region} className="relative">
                             <div className="flex justify-between items-center mb-2">
-                              <span className="text-sm font-medium text-gray-700">{region}</span>
-                              <span className="text-sm text-gray-500">
+                              <span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                                {region}
+                              </span>
+                              <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
                                 {count} ({percentage.toFixed(1)}%)
                               </span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div className="w-full rounded-full h-2" 
+                                 style={{ backgroundColor: 'var(--bg-tertiary)' }}>
                               <div 
-                                className="bg-blue-600 h-2 rounded-full transition-all duration-500"
-                                style={{ width: `${percentage}%` }}
+                                className="h-2 rounded-full transition-all duration-500"
+                                style={{ 
+                                  width: `${percentage}%`,
+                                  backgroundColor: 'var(--accent-primary)'
+                                }}
                               ></div>
                             </div>
                           </div>
@@ -129,7 +159,7 @@ export default function SpecDatabasePage() {
                       })}
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="text-center py-8" style={{ color: 'var(--text-muted)' }}>
                     <div className="text-4xl mb-2">🌍</div>
                     <p>Henüz bölge verisi yok</p>
                   </div>
@@ -137,7 +167,11 @@ export default function SpecDatabasePage() {
               </div>
 
               {/* Institution Type Distribution */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="rounded-xl shadow-sm border p-6" 
+                   style={{ 
+                     backgroundColor: 'var(--bg-secondary)', 
+                     borderColor: 'var(--border-primary)' 
+                   }}>
                 <h3 className="text-xl font-semibold mb-6 text-gray-900">🏢 Kurum Tipi Dağılımı</h3>
                 
                 {Object.keys(stats.byInstitutionType).length > 0 ? (

@@ -15,35 +15,45 @@ function PriceChart({ prices, selectedCategory }: PriceChartProps) {
     : prices.filter(p => p.category === selectedCategory)
 
   return (
-    <div className="bg-white p-6 rounded-lg border border-gray-200">
+    <div className="p-6 rounded-lg border" 
+         style={{ 
+           backgroundColor: 'var(--bg-secondary)', 
+           borderColor: 'var(--border-primary)' 
+         }}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">📊 Fiyat Trendi</h3>
-        <div className="text-sm text-gray-500">
+        <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+          📊 Fiyat Trendi
+        </h3>
+        <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
           {filteredPrices.length} ürün
         </div>
       </div>
       
       <div className="space-y-3">
         {filteredPrices.slice(0, 10).map((price, index) => (
-          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded">
+          <div key={index} className="flex items-center justify-between p-3 rounded" 
+               style={{ backgroundColor: 'var(--bg-tertiary)' }}>
             <div className="flex items-center gap-3">
-              <div className={`w-3 h-3 rounded-full ${{ 
-                'up': 'bg-red-500', 
-                'down': 'bg-green-500', 
-                'stable': 'bg-gray-400' 
-              }[price.trend]}`} />
+              <div className={`w-3 h-3 rounded-full`} 
+                   style={{ 
+                     backgroundColor: price.trend === 'up' ? 'var(--status-error)' : 
+                                    price.trend === 'down' ? 'var(--status-success)' : 'var(--text-muted)'
+                   }} />
               <div>
-                <p className="font-medium text-gray-800">{price.name}</p>
-                <p className="text-xs text-gray-500">{price.city} • {price.unit}</p>
+                <p className="font-medium" style={{ color: 'var(--text-primary)' }}>{price.name}</p>
+                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{price.city} • {price.unit}</p>
               </div>
             </div>
             
             <div className="text-right">
-              <p className="font-semibold text-lg">₺{price.avgPrice.toFixed(2)}</p>
-              <p className={`text-xs font-medium ${
-                price.changePercent > 0 ? 'text-red-600' : 
-                price.changePercent < 0 ? 'text-green-600' : 'text-gray-500'
-              }`}>
+              <p className="font-semibold text-lg" style={{ color: 'var(--text-primary)' }}>
+                ₺{price.avgPrice.toFixed(2)}
+              </p>
+              <p className="text-xs font-medium" 
+                 style={{ 
+                   color: price.changePercent > 0 ? 'var(--status-error)' : 
+                          price.changePercent < 0 ? 'var(--status-success)' : 'var(--text-muted)'
+                 }}>
                 {price.changePercent > 0 ? '+' : ''}{price.changePercent.toFixed(1)}%
               </p>
             </div>
@@ -590,35 +600,49 @@ export default function MarketIntelligencePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" 
+           style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Piyasa verileri yükleniyor...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" 
+               style={{ borderColor: 'var(--accent-primary)' }}></div>
+          <p style={{ color: 'var(--text-muted)' }}>Piyasa verileri yükleniyor...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
+      <div className="shadow-sm border-b" 
+           style={{ 
+             backgroundColor: 'var(--bg-secondary)', 
+             borderColor: 'var(--border-primary)' 
+           }}>
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">📊 Piyasa Trend Zekâsı</h1>
-              <p className="text-gray-600 mt-1">Güncel hal fiyatları ve trend analizleri</p>
+              <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                📊 Piyasa Trend Zekâsı
+              </h1>
+              <p className="mt-1" style={{ color: 'var(--text-muted)' }}>
+                Güncel hal fiyatları ve trend analizleri
+              </p>
             </div>
             
             <div className="flex items-center gap-4">
               {lastUpdate && (
-                <div className="text-sm text-gray-500">
+                <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
                   Son güncelleme: {lastUpdate.toLocaleTimeString('tr-TR')}
                 </div>
               )}
               <button
                 onClick={refreshData}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
+                className="px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                style={{ 
+                  backgroundColor: 'var(--accent-primary)', 
+                  color: 'white' 
+                }}
               >
                 🔄 Yenile
               </button>
@@ -629,8 +653,12 @@ export default function MarketIntelligencePage() {
 
       {/* Error Banner */}
       {error && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 mx-4 mt-4">
-          <p className="text-red-700">{error}</p>
+        <div className="border-l-4 p-4 mx-4 mt-4" 
+             style={{ 
+               backgroundColor: 'var(--bg-secondary)', 
+               borderColor: 'var(--status-error)' 
+             }}>
+          <p style={{ color: 'var(--status-error)' }}>{error}</p>
         </div>
       )}
 
