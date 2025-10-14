@@ -137,28 +137,24 @@ export function validateRecipe(recipe: any): ValidationResult {
 }
 
 /**
- * User Input Sanitization
+ * Simple Input Sanitization - Tek kullanıcı için basit
  */
 export function sanitizeInput(input: string): string {
   if (typeof input !== 'string') return ''
-  
-  return input
-    .trim()
-    .replace(/[<>]/g, '') // Remove potential HTML tags
-    .replace(/javascript:/gi, '') // Remove javascript: protocols
-    .replace(/on\w+=/gi, '') // Remove event handlers
-    .substring(0, 1000) // Limit length
+  return input.trim()
 }
 
 /**
- * API Request Validation
+ * Simple API Request Validation - Tek kullanıcı için basit
  */
 export function validateApiRequest(data: any, requiredFields: string[]): ValidationResult {
   const errors: string[] = []
 
+  // Basit null/undefined kontrolü yeter
   requiredFields.forEach(field => {
-    const fieldError = Validator.required(data[field], field)
-    if (fieldError) errors.push(fieldError)
+    if (!data[field]) {
+      errors.push(`${field} gereklidir`)
+    }
   })
 
   return {
@@ -168,25 +164,14 @@ export function validateApiRequest(data: any, requiredFields: string[]): Validat
 }
 
 /**
- * Market Price Request Validation
+ * Simple Market Price Validation - Tek kullanıcı için basit
  */
 export function validateMarketPriceRequest(data: any): ValidationResult {
   const errors: string[] = []
 
-  if (!data.products || !Array.isArray(data.products)) {
+  // Basit kontroller
+  if (!data.products || !Array.isArray(data.products) || data.products.length === 0) {
     errors.push('Ürün listesi gereklidir')
-  } else if (data.products.length === 0) {
-    errors.push('En az bir ürün seçin')
-  } else if (data.products.length > 50) {
-    errors.push('En fazla 50 ürün seçebilirsiniz')
-  } else {
-    data.products.forEach((product: string, index: number) => {
-      if (!product || typeof product !== 'string') {
-        errors.push(`Ürün ${index + 1} geçersiz`)
-      } else if (product.length > 100) {
-        errors.push(`Ürün ${index + 1} adı çok uzun`)
-      }
-    })
   }
 
   return {
@@ -196,18 +181,14 @@ export function validateMarketPriceRequest(data: any): ValidationResult {
 }
 
 /**
- * AI Analysis Request Validation
+ * Simple AI Analysis Validation - Tek kullanıcı için basit
  */
 export function validateAIAnalysisRequest(data: any): ValidationResult {
   const errors: string[] = []
 
-  if (!data.action || typeof data.action !== 'string') {
+  // Basit kontroller
+  if (!data.action) {
     errors.push('İşlem türü gereklidir')
-  }
-
-  const validActions = ['recipe-analysis', 'inventory-optimization', 'business-insights']
-  if (data.action && !validActions.includes(data.action)) {
-    errors.push('Geçersiz işlem türü')
   }
 
   if (!data.data) {

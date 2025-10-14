@@ -154,7 +154,7 @@ export default function SpecificationParserPage() {
   ]
 
   return (
-    <div className="min-h-screen p-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="min-h-screen p-6" style={{ backgroundColor: '#0f1419' }}>
       <div className="container mx-auto max-w-6xl">
         
         {/* Header */}

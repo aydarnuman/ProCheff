@@ -219,7 +219,7 @@ function TrendAnalysisCard({ analysis, productName, onProductSearch }: TrendAnal
       {analysis ? (
         <div className="space-y-4">
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-medium text-gray-800 mb-2">{analysis.productName}</h4>
+            <h4 className="font-medium text-white mb-2">{analysis.productName}</h4>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-gray-600">Haftalık Değişim</p>
@@ -287,13 +287,14 @@ interface GeminiPredictionsCardProps {
 
 function GeminiPredictionsCard({ predictions, isLoading, onRefresh }: GeminiPredictionsCardProps) {
   return (
-    <div className="bg-white p-6 rounded-lg border border-gray-200">
+    <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">🧠 Gemini AI Tahminleri</h3>
+        <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>🧠 Gemini AI Tahminleri</h3>
         <button
           onClick={onRefresh}
           disabled={isLoading}
-          className="px-3 py-1 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors disabled:opacity-50"
+          className="px-3 py-1 text-white rounded-lg text-sm font-medium hover:opacity-90 transition-all disabled:opacity-50"
+          style={{ backgroundColor: 'var(--accent-secondary)' }}
         >
           {isLoading ? '🔄' : '⚡'}
         </button>
@@ -309,7 +310,7 @@ function GeminiPredictionsCard({ predictions, isLoading, onRefresh }: GeminiPred
           {predictions.slice(0, 5).map((pred, index) => (
             <div key={index} className="border border-gray-200 rounded-lg p-4">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="font-medium text-gray-800">{pred.productName}</h4>
+                <h4 className="font-medium text-white">{pred.productName}</h4>
                 <div className="flex items-center gap-2">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                     pred.riskAssessment.level === 'high' ? 'bg-red-100 text-red-700' :
@@ -344,7 +345,7 @@ function GeminiPredictionsCard({ predictions, isLoading, onRefresh }: GeminiPred
               </div>
 
               <div className="bg-gray-50 p-3 rounded mb-3">
-                <p className="text-sm font-medium text-gray-700 mb-1">AI Önerisi:</p>
+                <p className="text-sm font-medium text-gray-300 mb-1">AI Önerisi:</p>
                 <p className="text-sm text-gray-600">{pred.recommendation.reasoning}</p>
                 {pred.recommendation.marginAdjustment !== 0 && (
                   <div className="mt-2 flex items-center gap-2">
@@ -367,19 +368,19 @@ function GeminiPredictionsCard({ predictions, isLoading, onRefresh }: GeminiPred
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
                   <span className="text-gray-500">Mevsimsel:</span>
-                  <p className="text-gray-700">{pred.factors.seasonal}</p>
+                  <p className="text-gray-300">{pred.factors.seasonal}</p>
                 </div>
                 <div>
                   <span className="text-gray-500">Ekonomik:</span>
-                  <p className="text-gray-700">{pred.factors.economic}</p>
+                  <p className="text-gray-300">{pred.factors.economic}</p>
                 </div>
                 <div>
                   <span className="text-gray-500">Arz:</span>
-                  <p className="text-gray-700">{pred.factors.supply}</p>
+                  <p className="text-gray-300">{pred.factors.supply}</p>
                 </div>
                 <div>
                   <span className="text-gray-500">Talep:</span>
-                  <p className="text-gray-700">{pred.factors.demand}</p>
+                  <p className="text-gray-300">{pred.factors.demand}</p>
                 </div>
               </div>
             </div>

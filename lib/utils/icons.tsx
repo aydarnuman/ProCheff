@@ -8,6 +8,7 @@ import {
   Calculator,
   Database,
   TrendingUp,
+  TrendingDown,
   FileSpreadsheet,
   BarChart3,
   Settings,
@@ -128,7 +129,7 @@ export function getTrendIcon(trend: 'up' | 'down' | 'stable', size: number = 16)
     case 'up':
       return <TrendingUp size={size} className="text-green-500" />
     case 'down':
-      return <TrendingUp size={size} className="text-red-500 rotate-180" />
+      return <TrendingDown size={size} className="text-red-500" />
     case 'stable':
       return <div className={`w-${size/4} h-0.5 bg-gray-400 rounded`} />
     default:

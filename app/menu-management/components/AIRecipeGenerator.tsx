@@ -131,7 +131,7 @@ export function AIRecipeGenerator({ onRecipeGenerated }: AIRecipeGeneratorProps)
       <BaseCard className="border-2 border-dashed border-primary/30 hover:border-primary/50 transition-colors">
         <div className="p-6">
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">AI Tarif Üretici</h3>
+            <h3 className="text-xl font-semibold text-white mb-2">AI Tarif Üretici</h3>
             <p className="text-sm text-gray-600">Yapay zeka ile özel tarifinizi oluşturun</p>
           </div>
           <div className="flex items-center gap-2 mb-6">
@@ -285,9 +285,9 @@ export function AIRecipeGenerator({ onRecipeGenerated }: AIRecipeGeneratorProps)
                 <h4 className="font-semibold mb-3">Malzemeler</h4>
                 <div className="space-y-2">
                   {generatedRecipe.ingredients.map((ingredient, index) => (
-                    <div key={index} className="flex justify-between items-center py-2 px-3 bg-white rounded-lg border">
-                      <span className="text-sm">{ingredient.name}</span>
-                      <span className="text-sm font-medium text-muted-foreground">
+                    <div key={index} className="flex justify-between items-center py-2 px-3 rounded-lg border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
+                      <span className="text-sm" style={{ color: 'var(--text-primary)' }}>{ingredient.name}</span>
+                      <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
                         {ingredient.amount} {ingredient.unit}
                       </span>
                     </div>
@@ -299,15 +299,15 @@ export function AIRecipeGenerator({ onRecipeGenerated }: AIRecipeGeneratorProps)
               <div>
                 <h4 className="font-semibold mb-3">Beslenme Değerleri (Porsiyon Başı)</h4>
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center py-2 px-3 bg-white rounded-lg border">
-                    <span className="text-sm">Kalori</span>
-                    <span className="text-sm font-medium">{generatedRecipe.nutritionInfo.calories} kcal</span>
+                  <div className="flex justify-between items-center py-2 px-3 rounded-lg border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
+                    <span className="text-sm" style={{ color: 'var(--text-primary)' }}>Kalori</span>
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>{generatedRecipe.nutritionInfo.calories} kcal</span>
                   </div>
-                  <div className="flex justify-between items-center py-2 px-3 bg-white rounded-lg border">
-                    <span className="text-sm">Protein</span>
-                    <span className="text-sm font-medium">{generatedRecipe.nutritionInfo.protein}g</span>
+                  <div className="flex justify-between items-center py-2 px-3 rounded-lg border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
+                    <span className="text-sm" style={{ color: 'var(--text-primary)' }}>Protein</span>
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>{generatedRecipe.nutritionInfo.protein}g</span>
                   </div>
-                  <div className="flex justify-between items-center py-2 px-3 bg-white rounded-lg border">
+                  <div className="flex justify-between items-center py-2 px-3 rounded-lg border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
                     <span className="text-sm">Karbonhidrat</span>
                     <span className="text-sm font-medium">{generatedRecipe.nutritionInfo.carbs}g</span>
                   </div>

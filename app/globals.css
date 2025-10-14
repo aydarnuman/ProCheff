@@ -13,9 +13,9 @@
   --accent-primary: #3b82f6;      /* Ana vurgu - mavi */
   --accent-secondary: #8b5cf6;    /* İkinci vurgu - mor */
   
-  --text-primary: #e6edf3;        /* Ana metin */
-  --text-secondary: #7d8590;      /* İkincil metin */
-  --text-muted: #656d76;          /* Soluk metin */
+  --text-primary: #ffffff;        /* Ana metin - Beyaz için daha iyi kontrast */
+  --text-secondary: #c9d1d9;      /* İkincil metin - Daha açık gri */
+  --text-muted: #8b949e;          /* Soluk metin - Görülebilir gri */
   
   --border-primary: #30363d;      /* Ana border */
   --border-secondary: #21262d;    /* İkincil border */
@@ -24,6 +24,11 @@
   --status-success: #238636;      /* Başarı - yeşil */
   --status-warning: #d29922;      /* Uyarı - turuncu */
   --status-error: #da3633;        /* Hata - kırmızı */
+  
+  /* Kısaltmalar - Daha kolay kullanım için */
+  --success-primary: var(--status-success);
+  --warning-primary: var(--status-warning);
+  --error-primary: var(--status-error);
   
   /* Component spacing */
   --space-component: 1.5rem;
@@ -44,6 +49,12 @@
   --font-size-xl: 20px;
   --font-size-2xl: 24px;
   --font-size-3xl: 32px;
+}
+
+/* Global Element Styling */
+html, body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 /* Mikro UX Animasyonları - Phase 5.5 */

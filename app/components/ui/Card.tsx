@@ -68,8 +68,9 @@ export function BaseCard({
 
 /**
  * İstatistik kartı - dashboard'da sayılar göstermek için
+ * React.memo ile optimize edilmiş - gereksiz re-render önlenir
  */
-export function StatCard({ 
+export const StatCard = React.memo(function StatCard({ 
   title, 
   value, 
   change, 
@@ -113,12 +114,13 @@ export function StatCard({
       </div>
     </BaseCard>
   )
-}
+})
 
 /**
  * Bilgi kartı - özellikler, modüller için
+ * React.memo ile optimize edilmiş
  */
-export function InfoCard({ 
+export const InfoCard = React.memo(function InfoCard({ 
   title, 
   description, 
   icon, 
@@ -211,4 +213,4 @@ export function InfoCard({
       </BaseCard>
     </CardWrapper>
   )
-}
+})

@@ -38,19 +38,23 @@ export default function MenuManagementPage() {
   const handleQuickAction = (actionId: string) => {
     console.log(`Quick action: ${actionId}`)
     
-    if (actionId === 'add-recipe') {
-      setShowAIGenerator(true)
-    } else if (actionId === 'refresh-data') {
-      refreshData()
+    if (actionId === 'cost-calculator') {
+      // Maliyet hesaplama sayfasına yönlendir
+      window.open('/cost-simulator', '_blank')
+    } else if (actionId === 'inventory-check') {
+      // Malzeme havuzu durumu modalını aç
+      console.log('Malzeme havuzu durumu kontrol ediliyor...')
+    } else if (actionId === 'menu-planner') {
+      // Menü planlama modalını aç
+      console.log('Menü planlama başlatılıyor...')
     }
-    // Buraya diğer hızlı aksiyonların fonksiyonları gelecek
   }
 
   // Dinamik istatistikler veya varsayılan değerler
   const totalStats = formattedStats || [
     { title: 'Toplam Tarif', value: '247', change: '+12', trend: 'up' as const, icon: '🥘' },
     { title: 'Aktif Menü', value: '8', change: '+2', trend: 'up' as const, icon: '📝' },
-    { title: 'Malzeme Stok', value: '156', change: '-5', trend: 'down' as const, icon: '📦' },
+    { title: 'Malzeme Havuzu', value: '156', change: '-5', trend: 'down' as const, icon: '📦' },
     { title: 'Aylık Maliyet', value: '₺24.5K', change: '+8%', trend: 'up' as const, icon: '💰' }
   ]
 
@@ -92,7 +96,7 @@ export default function MenuManagementPage() {
               onClick={() => setShowAIGenerator(!showAIGenerator)}
             >
               <Plus size={18} />
-              {showAIGenerator ? 'AI Generator Kapat' : 'AI Tarif Oluştur'}
+              {showAIGenerator ? 'Kapat' : 'AI Tarif Oluştur'}
             </Button>
             
             <Button 
@@ -104,16 +108,6 @@ export default function MenuManagementPage() {
             >
               <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
               Yenile
-            </Button>
-            
-            <Button 
-              variant="secondary" 
-              size="md" 
-              className="flex items-center gap-2"
-              onClick={() => handleQuickAction('analytics')}
-            >
-              <TrendingUp size={18} />
-              Analitik
             </Button>
           </div>
         </div>
@@ -143,18 +137,19 @@ export default function MenuManagementPage() {
             </div>
             <div className="space-y-3">
               {alerts.map((alert) => (
-                <div key={alert.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-amber-200">
+                <div key={alert.id} className="flex items-center justify-between p-3 rounded-lg border" 
+                     style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
                   <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--error-primary)' }}></div>
                     <div>
-                      <p className="font-medium text-gray-900">{alert.name}</p>
-                      <p className="text-sm text-gray-600">
+                      <p className="font-medium" style={{ color: 'var(--text-primary)' }}>{alert.name}</p>
+                      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                         Mevcut: {alert.currentStock} • Minimum: {alert.minimumStock}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-gray-700">{alert.supplier}</p>
+                    <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>{alert.supplier}</p>
                     <Button 
                       size="sm" 
                       variant="primary" 

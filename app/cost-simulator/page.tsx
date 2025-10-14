@@ -1,679 +1,610 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { CostSimulator, OptimizationRequest, CostCalculation, RequiredIngredient } from '@/lib/services/costSimulator'
-import { Calculator, TrendingUp, Zap, Settings, Plus, Trash2, Download, ArrowRight, Target, DollarSign, MapPin, Clock } from 'lucide-react'
+import { Calculator, TrendingUp, Zap, Settings, Plus, Trash2, Download, ArrowRight, Target, DollarSign, ShoppingCart, Package, BarChart3 } from 'lucide-react'
+import { 
+  Product, 
+  ProductVariant, 
+  CostSimulationInput,
+  CostSimulationResult 
+} from '@/lib/data/variantPricing'
+import { 
+  CostSimulationEngine,
+  VariantPriceCalculator,
+  VariantUtils 
+} from '@/lib/services/variantPriceEngine'
 
-export default function CostSimulatorPage() {
-  const [simulator] = useState(new CostSimulator())
-  const [isCalculating, setIsCalculating] = useState(false)
-  const [result, setResult] = useState<CostCalculation | null>(null)
-  
-  const [portionCount, setPortionCount] = useState(500)
-  const [targetProfitMargin, setTargetProfitMargin] = useState(20)
-  const [maxBudgetPerPortion, setMaxBudgetPerPortion] = useState('')
-  const [qualityPreference, setQualityPreference] = useState<'premium' | 'standard' | 'budget'>('standard')
-  const [batchSize, setBatchSize] = useState<'small' | 'medium' | 'large'>('medium')
-  
-  const [specialRequirements, setSpecialRequirements] = useState({
-    organic: false,
-    halal: true,
-    local: false,
-    certified: true
-  })
-
-  const [ingredients, setIngredients] = useState<RequiredIngredient[]>([
-    {
-      name: 'Dana Eti',
-      category: 'et',
-      quantity: 120,
-      alternatives: ['kuzu eti', 'kırmızı et'],
-      priority: 'essential'
-    },
-    {
-      name: 'Sebze Karışımı',
-      category: 'sebze', 
-      quantity: 50,
-      alternatives: ['domates', 'soğan', 'biber'],
-      priority: 'important'
-    },
-    {
-      name: 'Ayçiçek Yağı',
-      category: 'yag',
-      quantity: 15,
-      alternatives: ['zeytinyağı', 'mısır yağı'],
-      priority: 'essential'
-    }
-  ])
-
-  const handleOptimize = async () => {
-    setIsCalculating(true)
-    
-    try {
-      const request: OptimizationRequest = {
-        ingredients,
-        portionCount,
-        targetProfitMargin,
-        maxBudgetPerPortion: maxBudgetPerPortion ? parseFloat(maxBudgetPerPortion) : undefined,
-        qualityPreference,
-        specialRequirements,
-        batchSize
+// Mock product data - gerçek API ile değiştirilecek
+const mockProducts: Product[] = [
+  {
+    id: 'dana-eti-001',
+    name: 'Dana Eti (Kuşbaşı)',
+    brand: 'Genel',
+    category: 'Et ve Et Ürünleri',
+    baseUnit: 'kg',
+    description: 'Taze dana kuşbaşı, yemeklik',
+    keywords: ['dana', 'et', 'kuşbaşı', 'kırmızı et'],
+    variants: [
+      {
+        id: 'dana-bim-5kg',
+        productId: 'dana-eti-001',
+        size: 5,
+        sizeUnit: 'kg',
+        packageType: 'ekonomik paket',
+        market: 'BİM',
+        price: 445.00,
+        unitPrice: 89.00,
+        isBasePrice: true,
+        availability: 'available',
+        priceSource: {
+          id: 'bim-api-001',
+          type: 'supplier_api',
+          name: 'BİM API',
+          lastCheck: new Date('2024-10-14'),
+          isActive: true,
+          confidence: 0.95
+        },
+        priceHistory: [],
+        trend: { direction: 'down', percentage: -2.3, period: '7d', confidence: 0.88 },
+        lastUpdated: new Date('2024-10-14')
+      },
+      {
+        id: 'dana-migros-3kg',
+        productId: 'dana-eti-001',
+        size: 3,
+        sizeUnit: 'kg',
+        packageType: 'normal paket',
+        market: 'Migros',
+        price: 285.00,
+        unitPrice: 95.00,
+        isBasePrice: false,
+        availability: 'available',
+        priceSource: {
+          id: 'migros-scraper-001',
+          type: 'direct_scraping',
+          name: 'Migros Scraper',
+          lastCheck: new Date('2024-10-14'),
+          isActive: true,
+          confidence: 0.82
+        },
+        priceHistory: [],
+        trend: { direction: 'up', percentage: 1.8, period: '7d', confidence: 0.75 },
+        lastUpdated: new Date('2024-10-14')
       }
+    ],
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-10-14')
+  },
+  {
+    id: 'pirinc-001',
+    name: 'Baldo Pirinç',
+    brand: 'Genel',
+    category: 'Tahıl ve Hububat',
+    baseUnit: 'kg',
+    description: 'Kaliteli baldo pirinç',
+    keywords: ['pirinç', 'baldo', 'tahıl', 'pilav'],
+    variants: [
+      {
+        id: 'pirinc-bim-10kg',
+        productId: 'pirinc-001',
+        size: 10,
+        sizeUnit: 'kg',
+        packageType: 'jumbo paket',
+        market: 'BİM',
+        price: 180.00,
+        unitPrice: 18.00,
+        isBasePrice: true,
+        availability: 'available',
+        priceSource: {
+          id: 'bim-api-002',
+          type: 'supplier_api',
+          name: 'BİM API',
+          lastCheck: new Date('2024-10-14'),
+          isActive: true,
+          confidence: 0.92
+        },
+        priceHistory: [],
+        trend: { direction: 'down', percentage: -5.2, period: '30d', confidence: 0.85 },
+        lastUpdated: new Date('2024-10-14')
+      }
+    ],
+    createdAt: new Date('2024-02-20'),
+    updatedAt: new Date('2024-10-14')
+  },
+  {
+    id: 'sogan-001',
+    name: 'Soğan',
+    brand: 'Genel',
+    category: 'Sebze ve Meyve',
+    baseUnit: 'kg',
+    description: 'Taze kuru soğan',
+    keywords: ['soğan', 'sebze', 'kuru soğan'],
+    variants: [
+      {
+        id: 'sogan-bim-2kg',
+        productId: 'sogan-001',
+        size: 2,
+        sizeUnit: 'kg',
+        packageType: 'file',
+        market: 'BİM',
+        price: 18.00,
+        unitPrice: 9.00,
+        isBasePrice: true,
+        availability: 'available',
+        priceSource: {
+          id: 'bim-api-003',
+          type: 'supplier_api',
+          name: 'BİM API',
+          lastCheck: new Date('2024-10-14'),
+          isActive: true,
+          confidence: 0.90
+        },
+        priceHistory: [],
+        trend: { direction: 'stable', percentage: 0.1, period: '7d', confidence: 0.70 },
+        lastUpdated: new Date('2024-10-14')
+      }
+    ],
+    createdAt: new Date('2024-03-01'),
+    updatedAt: new Date('2024-10-14')
+  }
+]
 
-      const calculation = await simulator.optimizeCost(request)
-      setResult(calculation)
-      
+interface SimulationRequest {
+  productId: string
+  requiredQuantity: number
+  targetBudget?: number
+}
+
+export default function AdvancedCostSimulatorPage() {
+  const [products, setProducts] = useState<Product[]>([])
+  const [simulationRequests, setSimulationRequests] = useState<SimulationRequest[]>([
+    { productId: 'dana-eti-001', requiredQuantity: 50 },
+    { productId: 'pirinc-001', requiredQuantity: 20 },
+    { productId: 'sogan-001', requiredQuantity: 10 }
+  ])
+  
+  const [results, setResults] = useState<CostSimulationResult[]>([])
+  const [isCalculating, setIsCalculating] = useState(false)
+  const [servingCount, setServingCount] = useState(100)
+  const [totalBudget, setTotalBudget] = useState<number | undefined>(undefined)
+  const [showSettings, setShowSettings] = useState(false)
+
+  useEffect(() => {
+    loadProducts()
+  }, [])
+
+  const loadProducts = async () => {
+    try {
+      // Mock data - gerçek API ile değiştirilecek
+      setProducts(mockProducts)
     } catch (error) {
-      console.error('Optimizasyon hatası:', error)
-      alert('Maliyet optimizasyonu sırasında hata oluştu')
+      console.error('Ürünler yüklenirken hata:', error)
+    }
+  }
+
+  const addSimulationRequest = () => {
+    setSimulationRequests(prev => [...prev, {
+      productId: '',
+      requiredQuantity: 1
+    }])
+  }
+
+  const removeSimulationRequest = (index: number) => {
+    setSimulationRequests(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const updateSimulationRequest = (index: number, updates: Partial<SimulationRequest>) => {
+    setSimulationRequests(prev => prev.map((req, i) => 
+      i === index ? { ...req, ...updates } : req
+    ))
+  }
+
+  const runSimulation = async () => {
+    setIsCalculating(true)
+    try {
+      const simulationResults: CostSimulationResult[] = []
+      
+      for (const request of simulationRequests) {
+        if (!request.productId || request.requiredQuantity <= 0) continue
+        
+        const product = products.find(p => p.id === request.productId)
+        if (!product) continue
+        
+        const input: CostSimulationInput = {
+          productId: request.productId,
+          requiredQuantity: request.requiredQuantity,
+          requiredUnit: product.baseUnit,
+          targetBudget: request.targetBudget
+        }
+        
+        const result = CostSimulationEngine.simulate(product, input)
+        simulationResults.push(result)
+      }
+      
+      setResults(simulationResults)
+    } catch (error) {
+      console.error('Simülasyon hatası:', error)
     } finally {
       setIsCalculating(false)
     }
   }
 
-  const addIngredient = () => {
-    const newIngredient: RequiredIngredient = {
-      name: '',
-      category: 'other',
-      quantity: 50,
-      alternatives: [],
-      priority: 'important'
-    }
-    setIngredients([...ingredients, newIngredient])
+  const getTotalCost = () => {
+    return results.reduce((sum, result) => sum + result.calculation.totalCost, 0)
   }
 
-  const updateIngredient = (index: number, updates: Partial<RequiredIngredient>) => {
-    const updated = ingredients.map((ing, i) => 
-      i === index ? { ...ing, ...updates } : ing
-    )
-    setIngredients(updated)
-  }
-
-  const removeIngredient = (index: number) => {
-    setIngredients(ingredients.filter((_, i) => i !== index))
-  }
-
-  const optimizationFeatures = [
-    {
-      icon: Target,
-      title: 'Tedarikçi Optimizasyonu',
-      description: 'En uygun tedarikçileri bulur',
-      color: 'var(--accent-primary)'
-    },
-    {
-      icon: DollarSign,
-      title: 'Maliyet Analizi',
-      description: 'Detaylı maliyet kırılımı yapar',
-      color: 'var(--status-success)'
-    },
-    {
-      icon: TrendingUp,
-      title: 'Kar Marjı Hesabı',
-      description: 'Optimal kar marjı önerir',
-      color: 'var(--accent-secondary)'
-    },
-    {
-      icon: MapPin,
-      title: 'Lojistik Optimizasyonu',
-      description: 'Teslimat maliyetlerini minimize eder',
-      color: 'var(--status-warning)'
-    }
-  ]
-
-  const getQualityLabel = (quality: string) => {
-    switch (quality) {
-      case 'premium': return { label: 'Premium', color: 'var(--accent-primary)' }
-      case 'standard': return { label: 'Standart', color: 'var(--status-success)' }
-      case 'budget': return { label: 'Ekonomik', color: 'var(--status-warning)' }
-      default: return { label: 'Standart', color: 'var(--status-success)' }
-    }
-  }
-
-  const getBatchSizeLabel = (batch: string) => {
-    switch (batch) {
-      case 'small': return { label: 'Küçük Batch', color: 'var(--status-warning)' }
-      case 'medium': return { label: 'Orta Batch', color: 'var(--accent-primary)' }
-      case 'large': return { label: 'Büyük Batch', color: 'var(--status-success)' }
-      default: return { label: 'Orta Batch', color: 'var(--accent-primary)' }
-    }
+  const getCostPerServing = () => {
+    const total = getTotalCost()
+    return servingCount > 0 ? total / servingCount : 0
   }
 
   return (
-    <div className="min-h-screen p-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <div className="container mx-auto max-w-7xl">
-        
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div>
-              <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
-                💰 Maliyet Simülasyonu
-              </h1>
-              <p style={{ color: 'var(--text-secondary)' }}>
-                Tedarikçi analizi ve kar optimizasyonu
-              </p>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-2 px-3 py-2 rounded-lg"
-                   style={{ backgroundColor: 'var(--bg-tertiary)' }}>
-                <Calculator size={16} style={{ color: 'var(--accent-primary)' }} />
-                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                  AI Optimizasyon
-                </span>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      {/* Header */}
+      <div className="shadow-sm border-b" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="py-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>Maliyet Simülatörü</h1>
+                <p className="mt-2" style={{ color: 'var(--text-secondary)' }}>Varyant bazlı maliyet hesaplama ve optimizasyon</p>
               </div>
+              <button
+                onClick={() => setShowSettings(!showSettings)}
+                className={`flex items-center px-4 py-2 rounded-lg border transition-all ${
+                  showSettings 
+                    ? 'border-blue-300 text-blue-400' 
+                    : 'hover:opacity-80'
+                }`}
+                style={{ 
+                  backgroundColor: showSettings ? 'var(--accent-primary)' : 'var(--bg-primary)', 
+                  borderColor: showSettings ? 'var(--accent-primary)' : 'var(--border-primary)',
+                  color: showSettings ? 'white' : 'var(--text-primary)'
+                }}
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                Ayarlar
+              </button>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Optimization Features */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {optimizationFeatures.map((feature, index) => {
-            const IconComponent = feature.icon
-            return (
-              <div key={index} className="p-4 rounded-xl border"
-                   style={{ 
-                     backgroundColor: 'var(--bg-secondary)',
-                     borderColor: 'var(--border-primary)'
-                   }}>
-                <div className="flex items-center gap-3 mb-2">
-                  <IconComponent size={20} style={{ color: feature.color }} />
-                  <h3 className="font-medium text-sm" style={{ color: 'var(--text-primary)' }}>
-                    {feature.title}
-                  </h3>
-                </div>
-                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                  {feature.description}
-                </p>
-              </div>
-            )
-          })}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Sol Panel - Ayarlar */}
-          <div className="lg:col-span-2 space-y-6">
+          {/* Sol Panel - Simülasyon Parametreleri */}
+          <div className="lg:col-span-1 space-y-6">
             
-            {/* Temel Ayarlar */}
-            <div className="p-6 rounded-xl border" 
-                 style={{ 
-                   backgroundColor: 'var(--bg-secondary)',
-                   borderColor: 'var(--border-primary)'
-                 }}>
-              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2"
-                  style={{ color: 'var(--text-primary)' }}>
-                <Settings size={20} style={{ color: 'var(--accent-primary)' }} />
-                Temel Parametreler
-              </h2>
+            {/* Genel Ayarlar */}
+            <div className="rounded-xl shadow-sm p-6 border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
+              <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Genel Parametreler</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2"
-                         style={{ color: 'var(--text-secondary)' }}>
+                  <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
                     Porsiyon Sayısı
                   </label>
                   <input
                     type="number"
-                    value={portionCount}
-                    onChange={(e) => setPortionCount(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-lg border"
-                    style={{
-                      backgroundColor: 'var(--bg-primary)',
-                      borderColor: 'var(--border-primary)',
-                      color: 'var(--text-primary)'
+                    value={servingCount}
+                    onChange={(e) => setServingCount(Number(e.target.value))}
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    style={{ 
+                      backgroundColor: 'var(--bg-primary)', 
+                      borderColor: 'var(--border-primary)', 
+                      color: 'var(--text-primary)' 
                     }}
+                    min="1"
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium mb-2"
-                         style={{ color: 'var(--text-secondary)' }}>
-                    Hedef Kar Marjı (%)
+                  <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
+                    Toplam Bütçe (Opsiyonel)
                   </label>
                   <input
                     type="number"
-                    value={targetProfitMargin}
-                    onChange={(e) => setTargetProfitMargin(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-lg border"
-                    style={{
-                      backgroundColor: 'var(--bg-primary)',
-                      borderColor: 'var(--border-primary)',
-                      color: 'var(--text-primary)'
+                    value={totalBudget || ''}
+                    onChange={(e) => setTotalBudget(e.target.value ? Number(e.target.value) : undefined)}
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    style={{ 
+                      backgroundColor: 'var(--bg-primary)', 
+                      borderColor: 'var(--border-primary)', 
+                      color: 'var(--text-primary)' 
                     }}
-                    min="0"
-                    max="100"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2"
-                         style={{ color: 'var(--text-secondary)' }}>
-                    Maks. Porsiyon Maliyeti (₺)
-                  </label>
-                  <input
-                    type="number"
-                    value={maxBudgetPerPortion}
-                    onChange={(e) => setMaxBudgetPerPortion(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border"
-                    style={{
-                      backgroundColor: 'var(--bg-primary)',
-                      borderColor: 'var(--border-primary)',
-                      color: 'var(--text-primary)'
-                    }}
-                    placeholder="Sınır yok"
+                    placeholder="Bütçe sınırı"
                     step="0.01"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Kalite ve Teslimat Ayarları */}
-            <div className="p-6 rounded-xl border" 
-                 style={{ 
-                   backgroundColor: 'var(--bg-secondary)',
-                   borderColor: 'var(--border-primary)'
-                 }}>
-              <h2 className="text-lg font-semibold mb-4"
-                  style={{ color: 'var(--text-primary)' }}>
-                🎯 Optimizasyon Hedefleri
-              </h2>
+            {/* Aksiyonlar */}
+            <div className="rounded-xl shadow-sm p-6 border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
+              <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Aksiyonlar</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2"
-                         style={{ color: 'var(--text-secondary)' }}>
-                    Kalite Tercihi
-                  </label>
-                  <select
-                    value={qualityPreference}
-                    onChange={(e) => setQualityPreference(e.target.value as any)}
-                    className="w-full px-3 py-2 rounded-lg border"
-                    style={{
-                      backgroundColor: 'var(--bg-primary)',
-                      borderColor: 'var(--border-primary)',
-                      color: 'var(--text-primary)'
-                    }}
-                  >
-                    <option value="budget">Ekonomik</option>
-                    <option value="standard">Standart</option>
-                    <option value="premium">Premium</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2"
-                         style={{ color: 'var(--text-secondary)' }}>
-                    Üretim Batch Boyutu
-                  </label>
-                  <select
-                    value={batchSize}
-                    onChange={(e) => setBatchSize(e.target.value as any)}
-                    className="w-full px-3 py-2 rounded-lg border"
-                    style={{
-                      backgroundColor: 'var(--bg-primary)',
-                      borderColor: 'var(--border-primary)',
-                      color: 'var(--text-primary)'
-                    }}
-                  >
-                    <option value="small">Küçük (500-2000 porsiyon)</option>
-                    <option value="medium">Orta (2000-10000 porsiyon)</option>
-                    <option value="large">Büyük (10000+ porsiyon)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Özel Gereksinimler */}
-            <div className="p-6 rounded-xl border" 
-                 style={{ 
-                   backgroundColor: 'var(--bg-secondary)',
-                   borderColor: 'var(--border-primary)'
-                 }}>
-              <h2 className="text-lg font-semibold mb-4"
-                  style={{ color: 'var(--text-primary)' }}>
-                📋 Özel Gereksinimler
-              </h2>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {Object.entries(specialRequirements).map(([key, value]) => {
-                  const labels = {
-                    organic: 'Organik',
-                    halal: 'Helal Sertifikalı',
-                    local: 'Yerel Tedarikçi',
-                    certified: 'Kalite Sertifikası'
-                  }
-                  
-                  return (
-                    <label key={key} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={value}
-                        onChange={(e) => setSpecialRequirements(prev => ({
-                          ...prev,
-                          [key]: e.target.checked
-                        }))}
-                        style={{ accentColor: 'var(--accent-primary)' }}
-                      />
-                      <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                        {labels[key as keyof typeof labels]}
-                      </span>
-                    </label>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Malzeme Listesi */}
-            <div className="p-6 rounded-xl border" 
-                 style={{ 
-                   backgroundColor: 'var(--bg-secondary)',
-                   borderColor: 'var(--border-primary)'
-                 }}>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold flex items-center gap-2"
-                    style={{ color: 'var(--text-primary)' }}>
-                  🥄 Malzeme Listesi
-                </h2>
+              <div className="space-y-3">
                 <button
-                  onClick={addIngredient}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-                  style={{
-                    backgroundColor: 'var(--accent-primary)',
-                    color: 'white'
+                  onClick={runSimulation}
+                  disabled={isCalculating || simulationRequests.length === 0}
+                  className="w-full flex items-center justify-center px-4 py-3 rounded-lg font-medium transition-all disabled:opacity-50"
+                  style={{ backgroundColor: 'var(--accent-primary)', color: 'white' }}
+                >
+                  <Calculator className="w-5 h-5 mr-2" />
+                  {isCalculating ? 'Hesaplanıyor...' : 'Simülasyon Çalıştır'}
+                </button>
+                
+                <button
+                  onClick={() => {/* Export işlevi */}}
+                  disabled={results.length === 0}
+                  className="w-full flex items-center justify-center px-4 py-3 rounded-lg font-medium border transition-all disabled:opacity-50 hover:opacity-80"
+                  style={{ 
+                    backgroundColor: 'var(--bg-primary)', 
+                    borderColor: 'var(--border-primary)', 
+                    color: 'var(--text-primary)' 
                   }}
                 >
-                  <Plus size={16} />
-                  Malzeme Ekle
+                  <Download className="w-5 h-5 mr-2" />
+                  Sonuçları Dışa Aktar
                 </button>
               </div>
-              
-              <div className="space-y-4 max-h-64 overflow-y-auto">
-                {ingredients.map((ingredient, index) => (
-                  <div key={index} className="p-4 rounded-lg border"
-                       style={{ 
-                         backgroundColor: 'var(--bg-tertiary)',
-                         borderColor: 'var(--border-secondary)'
-                       }}>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                      <input
-                        type="text"
-                        placeholder="Malzeme adı"
-                        value={ingredient.name}
-                        onChange={(e) => updateIngredient(index, { name: e.target.value })}
-                        className="px-3 py-2 rounded border text-sm"
-                        style={{
-                          backgroundColor: 'var(--bg-primary)',
-                          borderColor: 'var(--border-primary)',
-                          color: 'var(--text-primary)'
-                        }}
-                      />
-                      
-                      <input
-                        type="number"
-                        placeholder="Miktar (g)"
-                        value={ingredient.quantity}
-                        onChange={(e) => updateIngredient(index, { quantity: Number(e.target.value) })}
-                        className="px-3 py-2 rounded border text-sm"
-                        style={{
-                          backgroundColor: 'var(--bg-primary)',
-                          borderColor: 'var(--border-primary)',
-                          color: 'var(--text-primary)'
-                        }}
-                      />
-                      
-                      <select
-                        value={ingredient.priority}
-                        onChange={(e) => updateIngredient(index, { priority: e.target.value as any })}
-                        className="px-3 py-2 rounded border text-sm"
-                        style={{
-                          backgroundColor: 'var(--bg-primary)',
-                          borderColor: 'var(--border-primary)',
-                          color: 'var(--text-primary)'
-                        }}
-                      >
-                        <option value="essential">Zorunlu</option>
-                        <option value="important">Önemli</option>
-                        <option value="optional">İsteğe Bağlı</option>
-                      </select>
-                      
+            </div>
+
+            {/* Ürün Listesi */}
+            <div className="rounded-xl shadow-sm p-6 border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Ürün Listesi</h3>
+                <button
+                  onClick={addSimulationRequest}
+                  className="flex items-center px-3 py-2 text-sm rounded-lg hover:opacity-80"
+                  style={{ backgroundColor: 'var(--accent-primary)', color: 'white' }}
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Ürün Ekle
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {simulationRequests.map((request, index) => (
+                  <div key={index} className="p-4 border rounded-lg" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-primary)' }}>
+                    <div className="flex items-start justify-between mb-3">
+                      <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Ürün {index + 1}</span>
                       <button
-                        onClick={() => removeIngredient(index)}
-                        className="flex items-center justify-center px-3 py-2 rounded transition-colors duration-200"
-                        style={{
-                          backgroundColor: 'var(--status-error)',
-                          color: 'white'
-                        }}
+                        onClick={() => removeSimulationRequest(index)}
+                        className="hover:opacity-80"
+                        style={{ color: 'var(--error-primary)' }}
                       >
-                        <Trash2 size={16} />
+                        <Trash2 className="w-4 h-4" />
                       </button>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div>
+                        <select
+                          value={request.productId}
+                          onChange={(e) => updateSimulationRequest(index, { productId: e.target.value })}
+                          className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          style={{ 
+                            backgroundColor: 'var(--bg-secondary)', 
+                            borderColor: 'var(--border-primary)', 
+                            color: 'var(--text-primary)' 
+                          }}
+                        >
+                          <option value="">Ürün seçin...</option>
+                          {products.map(product => (
+                            <option key={product.id} value={product.id}>
+                              {product.name} ({product.category})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <input
+                          type="number"
+                          value={request.requiredQuantity}
+                          onChange={(e) => updateSimulationRequest(index, { requiredQuantity: Number(e.target.value) })}
+                          className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          style={{ 
+                            backgroundColor: 'var(--bg-secondary)', 
+                            borderColor: 'var(--border-primary)', 
+                            color: 'var(--text-primary)' 
+                          }}
+                          placeholder="Miktar"
+                          min="0.1"
+                          step="0.1"
+                        />
+                      </div>
+
+                      <div>
+                        <input
+                          type="number"
+                          value={request.targetBudget || ''}
+                          onChange={(e) => updateSimulationRequest(index, { 
+                            targetBudget: e.target.value ? Number(e.target.value) : undefined 
+                          })}
+                          className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          style={{ 
+                            backgroundColor: 'var(--bg-secondary)', 
+                            borderColor: 'var(--border-primary)', 
+                            color: 'var(--text-primary)' 
+                          }}
+                          placeholder="Hedef bütçe (opsiyonel)"
+                          step="0.01"
+                        />
+                      </div>
                     </div>
                   </div>
                 ))}
-                
-                {ingredients.length === 0 && (
-                  <div className="text-center py-8">
-                    <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                      Henüz malzeme eklenmemiş. Yukarıdaki "Malzeme Ekle" butonunu kullanın.
-                    </p>
-                  </div>
-                )}
               </div>
-            </div>
-
-            {/* Optimizasyon Butonu */}
-            <div className="text-center">
-              <button
-                onClick={handleOptimize}
-                disabled={isCalculating || ingredients.length === 0}
-                className="px-8 py-4 text-lg font-semibold rounded-xl transition-all duration-200 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 mx-auto"
-                style={{
-                  backgroundColor: 'var(--accent-primary)',
-                  color: 'white'
-                }}
-              >
-                {isCalculating ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Optimizasyon Yapılıyor...
-                  </>
-                ) : (
-                  <>
-                    <Zap size={20} />
-                    Maliyet Optimizasyonunu Başlat
-                    <ArrowRight size={20} />
-                  </>
-                )}
-              </button>
             </div>
           </div>
 
           {/* Sağ Panel - Sonuçlar */}
-          <div className="space-y-6">
-            {result ? (
-              <>
-                {/* Maliyet Özeti */}
-                <div className="p-6 rounded-xl border" 
-                     style={{ 
-                       backgroundColor: 'var(--bg-accent-subtle)',
-                       borderColor: 'var(--border-primary)'
-                     }}>
-                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2"
-                      style={{ color: 'var(--text-primary)' }}>
-                    <TrendingUp size={20} style={{ color: 'var(--status-success)' }} />
-                    Optimizasyon Sonucu
-                  </h3>
-                  
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span style={{ color: 'var(--text-secondary)' }}>Toplam Maliyet:</span>
-                      <span className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
-                        ₺{result.totalCost.toFixed(2)}
-                      </span>
+          <div className="lg:col-span-2 space-y-6">
+            
+            {/* Özet Kartlar */}
+            {results.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="rounded-xl shadow-sm p-6 border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Toplam Maliyet</p>
+                      <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                        {VariantUtils.formatPrice(getTotalCost())}
+                      </p>
                     </div>
-                    
-                    <div className="flex justify-between items-center">
-                      <span style={{ color: 'var(--text-secondary)' }}>Porsiyon Başı:</span>
-                      <span className="text-lg font-semibold" style={{ color: 'var(--accent-primary)' }}>
-                        ₺{(result.totalCost / portionCount).toFixed(2)}
-                      </span>
-                    </div>
-                    
-                    <div className="flex justify-between items-center pt-3 border-t"
-                         style={{ borderColor: 'var(--border-secondary)' }}>
-                      <span style={{ color: 'var(--text-secondary)' }}>Hedef Kar Marjı:</span>
-                      <span className="text-xl font-bold" style={{ color: 'var(--status-success)' }}>
-                        %{targetProfitMargin}
-                      </span>
-                    </div>
+                    <DollarSign className="w-8 h-8" style={{ color: 'var(--success-primary)' }} />
                   </div>
                 </div>
 
-                {/* Optimizasyon Detayları */}
-                <div className="p-6 rounded-xl border" 
-                     style={{ 
-                       backgroundColor: 'var(--bg-secondary)',
-                       borderColor: 'var(--border-primary)'
-                     }}>
-                  <h3 className="text-lg font-semibold mb-4"
-                      style={{ color: 'var(--text-primary)' }}>
-                    📊 Maliyet Kırılımı
-                  </h3>
-                  
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                        Malzeme Maliyeti:
-                      </span>
-                      <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                        ₺{result.breakdown.ingredients.toFixed(2)}
-                      </span>
+                <div className="rounded-xl shadow-sm p-6 border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Porsiyon Maliyeti</p>
+                      <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
+                        {VariantUtils.formatPrice(getCostPerServing())}
+                      </p>
                     </div>
-                    
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                        İşçilik:
-                      </span>
-                      <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                        ₺{result.breakdown.labor.toFixed(2)}
-                      </span>
-                    </div>
-                    
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                        Teslimat:
-                      </span>
-                      <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                        ₺{result.breakdown.delivery.toFixed(2)}
-                      </span>
-                    </div>
-                    
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                        Genel Giderler:
-                      </span>
-                      <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                        ₺{result.breakdown.overhead.toFixed(2)}
-                      </span>
-                    </div>
+                    <Target className="w-8 h-8" style={{ color: 'var(--accent-primary)' }} />
                   </div>
                 </div>
 
-                {/* Öneriler */}
-                <div className="p-6 rounded-xl border" 
-                     style={{ 
-                       backgroundColor: 'var(--bg-secondary)',
-                       borderColor: 'var(--border-primary)'
-                     }}>
-                  <h3 className="text-lg font-semibold mb-4"
-                      style={{ color: 'var(--text-primary)' }}>
-                    💡 AI Önerileri
-                  </h3>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-2">
-                      <span style={{ color: 'var(--accent-primary)' }}>•</span>
-                      <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                        Yerel tedarikçiler %15 daha uygun maliyetli
-                      </span>
+                <div className="rounded-xl shadow-sm p-6 border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Ürün Sayısı</p>
+                      <p className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{results.length}</p>
                     </div>
-                    <div className="flex items-start gap-2">
-                      <span style={{ color: 'var(--accent-primary)' }}>•</span>
-                      <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                        Toplu alım ile %8 indirim fırsatı mevcut
-                      </span>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <span style={{ color: 'var(--accent-primary)' }}>•</span>
-                      <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                        Alternatif malzemeler ile %12 tasarruf sağlanabilir
-                      </span>
-                    </div>
+                    <Package className="w-8 h-8" style={{ color: 'var(--warning-primary)' }} />
                   </div>
                 </div>
+              </div>
+            )}
 
-                {/* İndir & Devam Et */}
-                <div className="p-6 rounded-xl border" 
-                     style={{ 
-                       backgroundColor: 'var(--bg-secondary)',
-                       borderColor: 'var(--border-primary)'
-                     }}>
-                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2"
-                      style={{ color: 'var(--text-primary)' }}>
-                    <Download size={20} style={{ color: 'var(--accent-primary)' }} />
-                    Sonuçlar
-                  </h3>
-                  
-                  <div className="space-y-3">
-                    <button
-                      className="w-full px-4 py-2 rounded-lg font-medium transition-colors duration-200"
-                      style={{
-                        backgroundColor: 'var(--bg-tertiary)',
-                        color: 'var(--text-secondary)'
-                      }}
-                    >
-                      📊 Maliyet Raporu (.xlsx)
-                    </button>
+            {/* Simülasyon Sonuçları */}
+            {results.length > 0 ? (
+              <div className="space-y-6">
+                {results.map((result, index) => (
+                  <div key={index} className="rounded-xl shadow-sm overflow-hidden border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
                     
-                    <button
-                      className="w-full px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2"
-                      style={{
-                        backgroundColor: 'var(--accent-primary)',
-                        color: 'white'
-                      }}
-                    >
-                      <Target size={16} />
-                      Teklif Paneline Gönder
-                      <ArrowRight size={16} />
-                    </button>
+                    {/* Ürün Header */}
+                    <div className="p-6 border-b" style={{ borderColor: 'var(--border-primary)' }}>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>{result.productName}</h3>
+                          <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
+                            {result.selectedVariant.market} - {result.selectedVariant.size} {result.selectedVariant.sizeUnit}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold" style={{ color: 'var(--accent-primary)' }}>
+                            {VariantUtils.formatPrice(result.calculation.totalCost)}
+                          </div>
+                          <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                            {VariantUtils.formatUnitPrice(result.calculation.unitPrice)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Hesaplama Detayları */}
+                    <div className="p-6">
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                        <div>
+                          <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>İhtiyaç</div>
+                          <div className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+                            {simulationRequests[index]?.requiredQuantity} kg
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Alınan Miktar</div>
+                          <div className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+                            {result.calculation.quantity} kg
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Paket Sayısı</div>
+                          <div className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+                            {result.calculation.packageCount}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm text-gray-600">Kalan</div>
+                          <div className="text-lg font-semibold text-white">
+                            {result.calculation.remainingAmount} kg
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Bütçe Analizi */}
+                      {result.budgetAnalysis && (
+                        <div className="p-4 rounded-lg border" style={{
+                          backgroundColor: result.budgetAnalysis.isWithinBudget ? 'rgba(35, 134, 54, 0.1)' : 'rgba(218, 54, 51, 0.1)',
+                          borderColor: result.budgetAnalysis.isWithinBudget ? 'var(--success-primary)' : 'var(--error-primary)'
+                        }}>
+                          <div className="flex items-center justify-between">
+                            <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                              Bütçe Durumu: {result.budgetAnalysis.isWithinBudget ? '✅ Uygun' : '❌ Aşım'}
+                            </div>
+                            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                              %{result.budgetAnalysis.budgetUsage} kullanım
+                            </div>
+                          </div>
+                          <div className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
+                            {result.budgetAnalysis.savingsOrOverrun >= 0 ? 'Tasarruf: ' : 'Aşım: '}
+                            {VariantUtils.formatPrice(Math.abs(result.budgetAnalysis.savingsOrOverrun))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Alternatifler */}
+                      {result.alternatives.length > 0 && (
+                        <div className="mt-6">
+                          <h4 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Alternatif Seçenekler</h4>
+                          <div className="space-y-3">
+                            {result.alternatives.slice(0, 3).map((alternative, altIndex) => (
+                              <div key={altIndex} className="flex items-center justify-between p-3 rounded-lg border" style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-primary)' }}>
+                                <div>
+                                  <div className="font-medium" style={{ color: 'var(--text-primary)' }}>
+                                    {alternative.variant.market} - {alternative.variant.size} {alternative.variant.sizeUnit}
+                                  </div>
+                                  <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                                    {VariantUtils.formatUnitPrice(alternative.variant.unitPrice)}
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <div className="font-semibold" style={{ color: 'var(--text-primary)' }}>
+                                    {VariantUtils.formatPrice(alternative.totalCost)}
+                                  </div>
+                                  <div className={`text-sm`} style={{ color: alternative.savings > 0 ? 'var(--success-primary)' : 'var(--error-primary)' }}>
+                                    {alternative.savings > 0 ? '+' : ''}{VariantUtils.formatPrice(alternative.savings)}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </>
+                ))}
+              </div>
             ) : (
-              <div className="p-8 rounded-xl border text-center" 
-                   style={{ 
-                     backgroundColor: 'var(--bg-secondary)',
-                     borderColor: 'var(--border-primary)'
-                   }}>
-                <div className="text-4xl mb-3">💰</div>
-                <p className="text-sm mb-4" style={{ color: 'var(--text-muted)' }}>
-                  Maliyet optimizasyonu için parametreleri ayarlayın ve malzemelerinizi ekleyin
+              <div className="rounded-xl shadow-sm p-12 text-center border" style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-primary)' }}>
+                <BarChart3 className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--text-secondary)' }} />
+                <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Simülasyon Sonucu Yok</h3>
+                <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>
+                  Maliyet analizi görmek için ürün ekleyip simülasyonu çalıştırın.
                 </p>
-                <div className="flex items-center justify-center gap-4 text-xs"
-                     style={{ color: 'var(--text-muted)' }}>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getQualityLabel(qualityPreference).color }} />
-                    {getQualityLabel(qualityPreference).label}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Target size={12} />
-                    {getBatchSizeLabel(batchSize).label}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Calculator size={12} />
-                    {portionCount.toLocaleString()} porsiyon
-                  </div>
-                </div>
+                <button
+                  onClick={addSimulationRequest}
+                  className="px-6 py-3 text-white rounded-lg hover:opacity-90"
+                  style={{ backgroundColor: 'var(--accent-primary)' }}
+                >
+                  İlk Ürünü Ekle
+                </button>
               </div>
             )}
           </div>

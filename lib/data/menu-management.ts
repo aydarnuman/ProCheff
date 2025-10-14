@@ -64,11 +64,11 @@ export const menuItems: MenuItemData[] = [
     ]
   },
   {
-    id: 'ingredients-stock',
-    title: 'Malzeme Stoku',
+    id: 'inventory-management',
+    title: 'Malzeme Havuzu',
     icon: '📦',
     count: '156',
-    description: 'Envanter takibi ve stok yönetimi',
+    description: 'Depo ve malzeme havuzu takibi',
     category: 'ingredients',
     actions: [
       { id: 'stock-status', title: 'Stok Durumu', status: 'available' },
@@ -152,8 +152,7 @@ export const menuItems: MenuItemData[] = [
 ]
 
 export const quickActions = [
-  { id: 'add-recipe', title: 'Hızlı Tarif Ekle', icon: '➕', color: 'var(--status-success)' },
-  { id: 'menu-wizard', title: 'Menü Sihirbazı', icon: '🪄', color: 'var(--accent-primary)' },
   { id: 'cost-calculator', title: 'Maliyet Hesapla', icon: '🧮', color: 'var(--status-warning)' },
-  { id: 'inventory-check', title: 'Stok Kontrolü', icon: '📋', color: 'var(--status-info)' }
+  { id: 'inventory-check', title: 'Havuz Durumu', icon: '📋', color: 'var(--status-info)' },
+  { id: 'menu-planner', title: 'Menü Planla', icon: '�', color: 'var(--accent-primary)' }
 ]

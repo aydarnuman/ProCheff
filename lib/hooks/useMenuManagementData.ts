@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
 interface MenuStats {
   totalRecipes: number
@@ -164,7 +164,7 @@ export function useMenuManagementData() {
     return () => clearInterval(interval)
   }, [])
 
-  const getFormattedStats = () => {
+  const formattedStats = useMemo(() => {
     if (!stats) return null
     
     return [
@@ -183,7 +183,7 @@ export function useMenuManagementData() {
         icon: '📝' 
       },
       { 
-        title: 'Malzeme Stok', 
+        title: 'Malzeme Havuzu', 
         value: stats.ingredientStock.toString(), 
         change: stats.trends.stock > 0 ? `+${stats.trends.stock}` : stats.trends.stock.toString(),
         trend: stats.trends.stock >= 0 ? 'up' as const : 'down' as const, 
@@ -197,7 +197,7 @@ export function useMenuManagementData() {
         icon: '💰' 
       }
     ]
-  }
+  }, [stats])
 
   return {
     stats,
@@ -206,7 +206,7 @@ export function useMenuManagementData() {
     loading,
     error,
     refreshData,
-    formattedStats: getFormattedStats(),
+    formattedStats,
     lastUpdated: stats?.lastUpdated
   }
 }

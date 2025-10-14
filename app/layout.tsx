@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="tr">
-      <body className={inter.className}>
+      <body className={inter.className} style={{ backgroundColor: '#0f1419' }}>
         <ClientLayout>
           {children}
         </ClientLayout>
