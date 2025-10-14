@@ -52,7 +52,7 @@ export default function PriceTrackerPage() {
                          trend.direction === 'down' ? TrendingDown : Minus
     const color = trend.direction === 'up' ? 'text-red-500' : 
                   trend.direction === 'down' ? 'text-green-500' : 'text-gray-400'
-    return <IconComponent className={`w-4 h-4 ${color}`} />
+    return <IconComponent className={`w-3 h-3 ${color}`} />
   }
 
   const exportToCostSimulator = (productId: string) => {
@@ -61,176 +61,108 @@ export default function PriceTrackerPage() {
   }
 
   return (
-    <div className="p-4 max-w-6xl mx-auto">
-      {/* Başlık */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
-          💰 Fiyat Takip
-        </h1>
-        <p className="text-[var(--text-secondary)]">
-          Anlık fiyat karşılaştırması
-        </p>
-      </div>
-
-      {/* Minimal Filtreler */}
-      <div className="flex gap-3 mb-6">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]" />
-          <input
-            type="text"
-            placeholder="Ürün ara..."
-            value={filters.searchQuery || ''}
-            onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
-            className="w-full pl-10 pr-4 py-2 text-sm border border-[var(--border-primary)] rounded-lg focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent"
-          />
+    <div className="p-3 max-w-5xl mx-auto">
+      {/* Ultra Minimal Header */}
+      <div className="flex items-center justify-between mb-3">
+        <h1 className="text-lg font-medium text-gray-900">💰 Fiyat Takip</h1>
+        <div className="flex gap-2">
+          <div className="relative">
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 w-3 h-3 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Ara..."
+              value={filters.searchQuery || ''}
+              onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
+              className="pl-7 pr-3 py-1 text-sm border border-gray-300 rounded w-40 focus:outline-none focus:border-blue-500"
+            />
+          </div>
         </div>
-        
-        <select
-          value={filters.sortBy || 'name'}
-          onChange={(e) => setFilters({ ...filters, sortBy: e.target.value as any })}
-          className="px-3 py-2 text-sm border border-[var(--border-primary)] rounded-lg"
-        >
-          <option value="name">İsme Göre</option>
-          <option value="price">Fiyata Göre</option>
-          <option value="trend">Trend'e Göre</option>
-        </select>
       </div>
 
-      {/* Kompakt Ürün Listesi */}
+      {/* Liste Görünümü */}
       {loading ? (
-        <div className="flex justify-center items-center py-12">
-          <RefreshCw className="w-6 h-6 animate-spin text-[var(--accent-primary)]" />
+        <div className="flex justify-center items-center py-6">
+          <RefreshCw className="w-4 h-4 animate-spin text-blue-500" />
         </div>
       ) : (
-        <div className="space-y-2">
-          {products.map((product) => {
+        <div className="bg-white rounded border border-gray-200 overflow-hidden">
+          {products.map((product, index) => {
             const isUpdating = updatingMarkets.has(product.id)
             const isStale = product.freshness > 7
 
             return (
               <div
                 key={product.id}
-                className={`bg-[var(--bg-secondary)] rounded-lg border p-4 transition-all hover:shadow-sm ${
-                  isStale ? 'border-red-200' : 'border-[var(--border-primary)]'
-                }`}
+                className={`grid grid-cols-12 gap-2 p-2 hover:bg-gray-50 transition-colors text-sm ${
+                  index !== products.length - 1 ? 'border-b border-gray-100' : ''
+                } ${isStale ? 'bg-red-50' : ''}`}
               >
-                <div className="flex items-center justify-between">
-                  {/* Sol: Ürün Bilgisi */}
-                  <div className="flex items-center gap-4 flex-1">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-medium text-[var(--text-primary)]">
-                          {product.name}
-                        </h3>
-                        <span className="px-2 py-0.5 bg-[var(--accent-secondary)] text-[var(--accent-primary)] text-xs rounded-full">
-                          {product.category}
-                        </span>
-                        {isStale && (
-                          <span className="text-xs text-red-500">⚠️ Eski</span>
-                        )}
-                      </div>
-                      
-                      <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)]">
-                        <span>En ucuz: <strong className="text-[var(--text-primary)]">
-                          {product.cheapestPrice.unitPrice.toFixed(2)} ₺/{product.unit}
-                        </strong></span>
-                        
-                        <span>Ort: <strong>
-                          {product.averagePrice.toFixed(2)} ₺/{product.unit}
-                        </strong></span>
-                        
-                        <div className="flex items-center gap-1">
-                          {getTrendIcon(product.trend)}
-                          <span className={`font-medium ${
-                            product.trend.direction === 'up' ? 'text-red-500' :
-                            product.trend.direction === 'down' ? 'text-green-500' : 'text-gray-500'
-                          }`}>
-                            {product.trend.percentage > 0 ? '+' : ''}{product.trend.percentage.toFixed(1)}%
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                {/* Ürün Adı */}
+                <div className="col-span-5 font-medium text-gray-900 truncate">
+                  {product.name}
+                  <span className="ml-2 text-xs text-gray-500">{product.category}</span>
+                  {isStale && <span className="ml-1 text-red-500 text-xs">⚠️</span>}
+                </div>
 
-                  {/* Sağ: İşlem Butonları */}
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => updatePrice(product.id)}
-                      disabled={isUpdating}
-                      className={`flex items-center gap-1 px-3 py-1.5 text-sm rounded-md transition-all ${
-                        isUpdating 
-                          ? 'bg-purple-500 text-white cursor-wait' 
-                          : 'bg-[var(--accent-primary)] text-white hover:opacity-90'
-                      }`}
-                    >
-                      <RefreshCw className={`w-3 h-3 ${isUpdating ? 'animate-spin' : ''}`} />
-                      {isUpdating ? 'Güncelleniyor...' : 'Güncelle'}
-                    </button>
+                {/* En Ucuz Fiyat */}
+                <div className="col-span-2 text-right">
+                  <span className="font-semibold text-green-600">
+                    {product.cheapestPrice.unitPrice.toFixed(2)} ₺
+                  </span>
+                </div>
 
-                    <button
-                      onClick={() => exportToCostSimulator(product.id)}
-                      className="flex items-center gap-1 px-3 py-1.5 text-sm border border-[var(--border-primary)] text-[var(--text-primary)] rounded-md hover:bg-[var(--bg-primary)] transition-colors"
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                      Simülatör
-                    </button>
+                {/* Ortalama Fiyat */}
+                <div className="col-span-2 text-right text-gray-600">
+                  {product.averagePrice.toFixed(2)} ₺
+                </div>
+
+                {/* Trend */}
+                <div className="col-span-1 flex items-center justify-center">
+                  <div className="flex items-center gap-0.5">
+                    {getTrendIcon(product.trend)}
+                    <span className={`text-xs ${
+                      product.trend.direction === 'up' ? 'text-red-500' :
+                      product.trend.direction === 'down' ? 'text-green-500' : 'text-gray-400'
+                    }`}>
+                      {product.trend.percentage > 0 ? '+' : ''}{product.trend.percentage.toFixed(0)}%
+                    </span>
                   </div>
                 </div>
 
-                {/* Genişletilebilir Market Listesi */}
-                <details className="mt-3">
-                  <summary className="text-sm text-[var(--accent-primary)] cursor-pointer hover:underline">
-                    {product.markets.length} market detayı →
-                  </summary>
-                  
-                  <div className="mt-2 pt-2 border-t border-[var(--border-primary)]">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {product.markets.map((market, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between p-2 bg-[var(--bg-primary)] rounded text-sm"
-                        >
-                          <div>
-                            <span className="font-medium">{market.market}</span>
-                            <span className="text-[var(--text-secondary)] ml-2">
-                              {market.package}
-                            </span>
-                          </div>
-                          
-                          <div className="text-right">
-                            <div className="font-medium">
-                              {market.unitPrice.toFixed(2)} ₺/{product.unit}
-                            </div>
-                            <span className={`px-1.5 py-0.5 text-xs rounded-full ${
-                              market.status === 'cheapest' ? 'bg-green-100 text-green-700' :
-                              market.status === 'expensive' ? 'bg-red-100 text-red-700' :
-                              'bg-gray-100 text-gray-600'
-                            }`}>
-                              {market.status === 'cheapest' ? 'En Ucuz' :
-                               market.status === 'expensive' ? 'Pahalı' : 'Ortalama'}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </details>
+                {/* Butonlar */}
+                <div className="col-span-2 flex items-center justify-end gap-1">
+                  <button
+                    onClick={() => updatePrice(product.id)}
+                    disabled={isUpdating}
+                    className={`p-0.5 rounded transition-colors ${
+                      isUpdating 
+                        ? 'bg-blue-500 text-white' 
+                        : 'hover:bg-gray-200 text-gray-600'
+                    }`}
+                    title="Fiyat Güncelle"
+                  >
+                    <RefreshCw className={`w-3 h-3 ${isUpdating ? 'animate-spin' : ''}`} />
+                  </button>
+
+                  <button
+                    onClick={() => exportToCostSimulator(product.id)}
+                    className="p-0.5 hover:bg-gray-200 text-gray-600 rounded transition-colors"
+                    title="Maliyet Simülatörü"
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                  </button>
+                </div>
               </div>
             )
           })}
         </div>
       )}
 
-      {/* Boş durum */}
+      {/* Boş Durum */}
       {!loading && products.length === 0 && (
-        <div className="text-center py-12">
-          <Search className="w-12 h-12 text-[var(--text-secondary)] mx-auto mb-3 opacity-50" />
-          <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
-            Ürün Bulunamadı
-          </h3>
-          <p className="text-[var(--text-secondary)]">
-            Arama teriminizi değiştirerek tekrar deneyin
-          </p>
+        <div className="text-center py-8 text-gray-500">
+          <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
+          <p>Ürün bulunamadı</p>
         </div>
       )}
     </div>
