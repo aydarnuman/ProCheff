@@ -3,6 +3,8 @@
 import React from 'react'
 import { InfoCard } from '@/app/components/ui'
 
+import { ActionItem } from '@/lib/data/menu-management'
+
 export interface MenuItem {
   id: string
   title: string
@@ -10,12 +12,12 @@ export interface MenuItem {
   count: string
   description: string
   category: string
-  actions: string[]
+  actions: ActionItem[]
 }
 
 export interface MenuCardProps {
   item: MenuItem
-  onActionClick: (itemId: string, action: string) => void
+  onActionClick: (itemId: string, actionId: string) => void
   className?: string
 }
 
@@ -23,7 +25,7 @@ export function MenuCard({ item, onActionClick, className = '' }: MenuCardProps)
   const handleCardClick = () => {
     // Varsayılan aksiyon - genellikle ilk aksiyon
     if (item.actions.length > 0) {
-      onActionClick(item.id, item.actions[0])
+      onActionClick(item.id, item.actions[0].id)
     }
   }
 
@@ -41,13 +43,16 @@ export function MenuCard({ item, onActionClick, className = '' }: MenuCardProps)
       <div className="mt-3 space-y-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
         {item.actions.slice(0, 3).map((action, index) => (
           <button
-            key={action}
+            key={action.id}
             onClick={(e) => {
               e.stopPropagation()
-              onActionClick(item.id, action)
+              if (action.status !== 'disabled') {
+                onActionClick(item.id, action.id)
+              }
             }}
+            disabled={action.status === 'disabled'}
             className={`
-              w-full text-left px-3 py-1.5 text-sm rounded transition-colors duration-150
+              w-full text-left px-3 py-1.5 text-sm rounded transition-colors duration-150 flex items-center justify-between
               hover:bg-opacity-10
               ${index === 0 ? 'font-medium' : ''}
             `}
@@ -58,7 +63,19 @@ export function MenuCard({ item, onActionClick, className = '' }: MenuCardProps)
               paddingLeft: index === 0 ? '0.75rem' : '1rem'
             }}
           >
-            {action}
+            <span className={action.status === 'disabled' ? 'opacity-50' : ''}>
+              {action.title}
+            </span>
+            {action.badge && (
+              <span className={`
+                text-xs px-2 py-0.5 rounded-full font-medium
+                ${action.status === 'coming-soon' ? 'bg-blue-100 text-blue-700' :
+                  action.status === 'disabled' ? 'bg-gray-100 text-gray-500' :
+                  'bg-green-100 text-green-700'}
+              `}>
+                {action.badge}
+              </span>
+            )}
           </button>
         ))}
         

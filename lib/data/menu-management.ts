@@ -12,7 +12,14 @@ export interface MenuItemData {
   count: string
   description: string
   category: string
-  actions: string[]
+  actions: ActionItem[]
+}
+
+export interface ActionItem {
+  id: string
+  title: string
+  status: 'available' | 'coming-soon' | 'disabled'
+  badge?: string
 }
 
 export const menuCategories: MenuCategory[] = [
@@ -32,13 +39,13 @@ export const menuItems: MenuItemData[] = [
     description: 'Tüm tariflerinizi ve kategorileri yönetin',
     category: 'recipes',
     actions: [
-      'Yeni Tarif Ekle', 
-      'Tarifleri Düzenle', 
-      'Kategoriler & Etiketler', 
-      'Arama & Filtre', 
-      'Tarif Şablonları',
-      'Beslenme Analizi',
-      'Maliyet Hesaplama'
+      { id: 'add-recipe', title: 'Yeni Tarif Ekle', status: 'available' },
+      { id: 'edit-recipes', title: 'Tarifleri Düzenle', status: 'available' },
+      { id: 'categories', title: 'Kategoriler & Etiketler', status: 'available' },
+      { id: 'search-filter', title: 'Arama & Filtre', status: 'available' },
+      { id: 'templates', title: 'Tarif Şablonları', status: 'coming-soon', badge: 'Yakında' },
+      { id: 'nutrition', title: 'Beslenme Analizi', status: 'available' },
+      { id: 'cost-calc', title: 'Maliyet Hesaplama', status: 'available' }
     ]
   },
   {
@@ -49,11 +56,11 @@ export const menuItems: MenuItemData[] = [
     description: 'Haftalık ve aylık menü planları',
     category: 'menus',
     actions: [
-      'Yeni Plan Oluştur', 
-      'Şablon Kullan', 
-      'Takvim Görünümü', 
-      'Plan Kopyala', 
-      'Sezonluk Planlar'
+      { id: 'new-plan', title: 'Yeni Plan Oluştur', status: 'available' },
+      { id: 'use-template', title: 'Şablon Kullan', status: 'coming-soon', badge: 'Yakında' },
+      { id: 'calendar-view', title: 'Takvim Görünümü', status: 'available' },
+      { id: 'copy-plan', title: 'Plan Kopyala', status: 'available' },
+      { id: 'seasonal-plans', title: 'Sezonluk Planlar', status: 'disabled', badge: 'Beta' }
     ]
   },
   {
@@ -64,11 +71,11 @@ export const menuItems: MenuItemData[] = [
     description: 'Envanter takibi ve stok yönetimi',
     category: 'ingredients',
     actions: [
-      'Stok Durumu', 
-      'Yeni Malzeme Ekle', 
-      'Tedarikçi Yönetimi', 
-      'Kritik Seviye Uyarıları',
-      'Stok Geçmişi'
+      { id: 'stock-status', title: 'Stok Durumu', status: 'available' },
+      { id: 'add-ingredient', title: 'Yeni Malzeme Ekle', status: 'available' },
+      { id: 'supplier-mgmt', title: 'Tedarikçi Yönetimi', status: 'available' },
+      { id: 'critical-alerts', title: 'Kritik Seviye Uyarıları', status: 'available' },
+      { id: 'stock-history', title: 'Stok Geçmişi', status: 'coming-soon', badge: 'Yakında' }
     ]
   },
   {
@@ -79,11 +86,11 @@ export const menuItems: MenuItemData[] = [
     description: 'Tarif maliyetleri ve karlılık analizi',
     category: 'costs',
     actions: [
-      'Maliyet Hesapla', 
-      'Karlılık Analizi', 
-      'Fiyat Önerileri', 
-      'Trend Analizi',
-      'Rapor Oluştur'
+      { id: 'cost-calculate', title: 'Maliyet Hesapla', status: 'available' },
+      { id: 'profit-analysis', title: 'Karlılık Analizi', status: 'available' },
+      { id: 'price-suggestions', title: 'Fiyat Önerileri', status: 'coming-soon', badge: 'Yakında' },
+      { id: 'trend-analysis', title: 'Trend Analizi', status: 'available' },
+      { id: 'generate-report', title: 'Rapor Oluştur', status: 'available' }
     ]
   },
   {
@@ -94,10 +101,10 @@ export const menuItems: MenuItemData[] = [
     description: 'Besin değerleri ve allerjen analizi',
     category: 'recipes',
     actions: [
-      'Besin Değeri Hesapla', 
-      'Allerjen Tarama', 
-      'Diyet Uyumluluğu', 
-      'Kalori Hesaplama'
+      { id: 'nutrition-calc', title: 'Besin Değeri Hesapla', status: 'available' },
+      { id: 'allergen-scan', title: 'Allerjen Tarama', status: 'coming-soon', badge: 'Yakında' },
+      { id: 'diet-compatibility', title: 'Diyet Uyumluluğu', status: 'available' },
+      { id: 'calorie-calc', title: 'Kalori Hesaplama', status: 'available' }
     ]
   },
   {
@@ -108,10 +115,10 @@ export const menuItems: MenuItemData[] = [
     description: 'Tedarikçi ilişkileri ve sipariş yönetimi',
     category: 'ingredients',
     actions: [
-      'Tedarikçi Listesi', 
-      'Sipariş Ver', 
-      'Fiyat Karşılaştır', 
-      'Performans Değerlendir'
+      { id: 'supplier-list', title: 'Tedarikçi Listesi', status: 'available' },
+      { id: 'place-order', title: 'Sipariş Ver', status: 'available' },
+      { id: 'price-compare', title: 'Fiyat Karşılaştır', status: 'available' },
+      { id: 'performance-eval', title: 'Performans Değerlendir', status: 'coming-soon', badge: 'Yakında' }
     ]
   },
   {
@@ -122,10 +129,10 @@ export const menuItems: MenuItemData[] = [
     description: 'Mevsimsel menü planları ve özel etkinlikler',
     category: 'menus',
     actions: [
-      'Sezon Planı Oluştur', 
-      'Etkinlik Menüleri', 
-      'Özel Günler', 
-      'Trend Menüler'
+      { id: 'seasonal-plan', title: 'Sezon Planı Oluştur', status: 'available' },
+      { id: 'event-menus', title: 'Etkinlik Menüleri', status: 'available' },
+      { id: 'special-days', title: 'Özel Günler', status: 'coming-soon', badge: 'Yakında' },
+      { id: 'trend-menus', title: 'Trend Menüler', status: 'disabled', badge: 'Beta' }
     ]
   },
   {
@@ -136,10 +143,10 @@ export const menuItems: MenuItemData[] = [
     description: 'Kalite standartları ve denetim süreçleri',
     category: 'recipes',
     actions: [
-      'Kalite Kriterleri', 
-      'Denetim Kayıtları', 
-      'İyileştirme Önerileri', 
-      'Standart Oluştur'
+      { id: 'quality-criteria', title: 'Kalite Kriterleri', status: 'available' },
+      { id: 'audit-records', title: 'Denetim Kayıtları', status: 'available' },
+      { id: 'improvement-suggestions', title: 'İyileştirme Önerileri', status: 'coming-soon', badge: 'Yakında' },
+      { id: 'create-standards', title: 'Standart Oluştur', status: 'disabled', badge: 'Pro' }
     ]
   }
 ]

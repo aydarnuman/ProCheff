@@ -78,9 +78,10 @@ export function StatCard({
   className = '' 
 }: StatCardProps) {
   const getTrendColor = (trend: string) => {
+    // Financial standard colors: green = increase, red = decrease
     switch (trend) {
-      case 'up': return 'var(--status-success)'
-      case 'down': return 'var(--status-error)'
+      case 'up': return 'var(--status-success)' // Green for positive/increase
+      case 'down': return 'var(--status-error)' // Red for negative/decrease
       default: return 'var(--text-muted)'
     }
   }

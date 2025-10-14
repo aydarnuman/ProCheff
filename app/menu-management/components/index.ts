@@ -6,3 +6,5 @@ export type { MenuItem, MenuCardProps, MenuGridProps } from './MenuCard'
 
 export { NutritionModal } from './NutritionModal'
 export type { NutritionModalProps } from './NutritionModal'
+
+export { AIRecipeGenerator } from './AIRecipeGenerator'
