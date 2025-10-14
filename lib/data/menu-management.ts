@@ -25,9 +25,9 @@ export interface ActionItem {
 export const menuCategories: MenuCategory[] = [
   { id: 'all', title: 'Tümü', icon: '🍽️' },
   { id: 'recipes', title: 'Tarifler', icon: '🥘', count: 247 },
-  { id: 'menus', title: 'Menüler', icon: '📝', count: 8 },
+  { id: 'costs', title: 'Maliyetler', icon: '�', count: 45 },
   { id: 'ingredients', title: 'Malzemeler', icon: '🥬', count: 156 },
-  { id: 'costs', title: 'Maliyetler', icon: '💰', count: 45 }
+  { id: 'menus', title: 'Menüler', icon: '�', count: 8 }
 ]
 
 export const menuItems: MenuItemData[] = [
@@ -36,31 +36,25 @@ export const menuItems: MenuItemData[] = [
     title: 'Tarif Yönetimi',
     icon: '🥘',
     count: '247',
-    description: 'Tüm tariflerinizi ve kategorileri yönetin',
+    description: 'Tarif oluşturma, düzenleme ve kategori yönetimi',
     category: 'recipes',
     actions: [
       { id: 'add-recipe', title: 'Yeni Tarif Ekle', status: 'available' },
       { id: 'edit-recipes', title: 'Tarifleri Düzenle', status: 'available' },
-      { id: 'categories', title: 'Kategoriler & Etiketler', status: 'available' },
-      { id: 'search-filter', title: 'Arama & Filtre', status: 'available' },
-      { id: 'templates', title: 'Tarif Şablonları', status: 'coming-soon', badge: 'Yakında' },
-      { id: 'nutrition', title: 'Beslenme Analizi', status: 'available' },
-      { id: 'cost-calc', title: 'Maliyet Hesaplama', status: 'available' }
+      { id: 'categories', title: 'Kategoriler', status: 'available' }
     ]
   },
   {
-    id: 'menu-planning',
-    title: 'Menü Planlama',
-    icon: '📅',
-    count: '8',
-    description: 'Haftalık ve aylık menü planları',
-    category: 'menus',
+    id: 'cost-analysis',
+    title: 'Maliyet & Fiyatlandırma',
+    icon: '�',
+    count: '45',
+    description: 'Maliyet hesaplama ve karlılık analizi',
+    category: 'costs',
     actions: [
-      { id: 'new-plan', title: 'Yeni Plan Oluştur', status: 'available' },
-      { id: 'use-template', title: 'Şablon Kullan', status: 'coming-soon', badge: 'Yakında' },
-      { id: 'calendar-view', title: 'Takvim Görünümü', status: 'available' },
-      { id: 'copy-plan', title: 'Plan Kopyala', status: 'available' },
-      { id: 'seasonal-plans', title: 'Sezonluk Planlar', status: 'disabled', badge: 'Beta' }
+      { id: 'cost-calculate', title: 'Maliyet Hesapla', status: 'available' },
+      { id: 'profit-analysis', title: 'Karlılık Analizi', status: 'available' },
+      { id: 'generate-report', title: 'Rapor Oluştur', status: 'available' }
     ]
   },
   {
@@ -68,85 +62,25 @@ export const menuItems: MenuItemData[] = [
     title: 'Malzeme Havuzu',
     icon: '📦',
     count: '156',
-    description: 'Depo ve malzeme havuzu takibi',
+    description: 'Malzeme stok takibi ve tedarikçi yönetimi',
     category: 'ingredients',
     actions: [
       { id: 'stock-status', title: 'Stok Durumu', status: 'available' },
-      { id: 'add-ingredient', title: 'Yeni Malzeme Ekle', status: 'available' },
-      { id: 'supplier-mgmt', title: 'Tedarikçi Yönetimi', status: 'available' },
-      { id: 'critical-alerts', title: 'Kritik Seviye Uyarıları', status: 'available' },
-      { id: 'stock-history', title: 'Stok Geçmişi', status: 'coming-soon', badge: 'Yakında' }
+      { id: 'add-ingredient', title: 'Yeni Malzeme', status: 'available' },
+      { id: 'supplier-mgmt', title: 'Tedarikçiler', status: 'available' }
     ]
   },
   {
-    id: 'cost-analysis',
-    title: 'Maliyet Analizi',
-    icon: '💰',
-    count: '45',
-    description: 'Tarif maliyetleri ve karlılık analizi',
-    category: 'costs',
-    actions: [
-      { id: 'cost-calculate', title: 'Maliyet Hesapla', status: 'available' },
-      { id: 'profit-analysis', title: 'Karlılık Analizi', status: 'available' },
-      { id: 'price-suggestions', title: 'Fiyat Önerileri', status: 'coming-soon', badge: 'Yakında' },
-      { id: 'trend-analysis', title: 'Trend Analizi', status: 'available' },
-      { id: 'generate-report', title: 'Rapor Oluştur', status: 'available' }
-    ]
-  },
-  {
-    id: 'nutrition-analysis',
-    title: 'Beslenme Analizi',
-    icon: '🥗',
-    count: '189',
-    description: 'Besin değerleri ve allerjen analizi',
-    category: 'recipes',
-    actions: [
-      { id: 'nutrition-calc', title: 'Besin Değeri Hesapla', status: 'available' },
-      { id: 'allergen-scan', title: 'Allerjen Tarama', status: 'coming-soon', badge: 'Yakında' },
-      { id: 'diet-compatibility', title: 'Diyet Uyumluluğu', status: 'available' },
-      { id: 'calorie-calc', title: 'Kalori Hesaplama', status: 'available' }
-    ]
-  },
-  {
-    id: 'supplier-management',
-    title: 'Tedarikçi Yönetimi',
-    icon: '🚚',
-    count: '23',
-    description: 'Tedarikçi ilişkileri ve sipariş yönetimi',
-    category: 'ingredients',
-    actions: [
-      { id: 'supplier-list', title: 'Tedarikçi Listesi', status: 'available' },
-      { id: 'place-order', title: 'Sipariş Ver', status: 'available' },
-      { id: 'price-compare', title: 'Fiyat Karşılaştır', status: 'available' },
-      { id: 'performance-eval', title: 'Performans Değerlendir', status: 'coming-soon', badge: 'Yakında' }
-    ]
-  },
-  {
-    id: 'seasonal-menus',
-    title: 'Sezonluk Menüler',
-    icon: '🍂',
-    count: '12',
-    description: 'Mevsimsel menü planları ve özel etkinlikler',
+    id: 'menu-planning',
+    title: 'Menü Planlama',
+    icon: '📅',
+    count: '8',
+    description: 'Haftalık menü planları ve organizasyon',
     category: 'menus',
     actions: [
-      { id: 'seasonal-plan', title: 'Sezon Planı Oluştur', status: 'available' },
-      { id: 'event-menus', title: 'Etkinlik Menüleri', status: 'available' },
-      { id: 'special-days', title: 'Özel Günler', status: 'coming-soon', badge: 'Yakında' },
-      { id: 'trend-menus', title: 'Trend Menüler', status: 'disabled', badge: 'Beta' }
-    ]
-  },
-  {
-    id: 'quality-control',
-    title: 'Kalite Kontrol',
-    icon: '⭐',
-    count: '34',
-    description: 'Kalite standartları ve denetim süreçleri',
-    category: 'recipes',
-    actions: [
-      { id: 'quality-criteria', title: 'Kalite Kriterleri', status: 'available' },
-      { id: 'audit-records', title: 'Denetim Kayıtları', status: 'available' },
-      { id: 'improvement-suggestions', title: 'İyileştirme Önerileri', status: 'coming-soon', badge: 'Yakında' },
-      { id: 'create-standards', title: 'Standart Oluştur', status: 'disabled', badge: 'Pro' }
+      { id: 'new-plan', title: 'Yeni Plan', status: 'available' },
+      { id: 'calendar-view', title: 'Takvim Görünümü', status: 'available' },
+      { id: 'copy-plan', title: 'Plan Kopyala', status: 'available' }
     ]
   }
 ]

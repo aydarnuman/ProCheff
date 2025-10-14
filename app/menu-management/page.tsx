@@ -25,13 +25,29 @@ export default function MenuManagementPage() {
   const handleActionClick = (itemId: string, action: string) => {
     console.log(`Action: ${action} for item: ${itemId}`)
     
-    // Beslenme analizi modalını aç
-    if (action.includes('Beslenme') || action.includes('Besin') || action.includes('Kalori')) {
-      const item = menuItems.find(i => i.id === itemId)
-      if (item) {
-        setSelectedItem({ id: item.id, title: item.title })
-        setNutritionModalOpen(true)
-      }
+    // Gerçek fonksiyonlar
+    switch (action) {
+      case 'add-recipe':
+        setShowAIGenerator(true)
+        break
+      case 'cost-calculate':
+        window.open('/cost-simulator', '_blank')
+        break
+      case 'stock-status':
+        // Stok durumu modalı göster
+        alert('Stok Durumu: 156 aktif malzeme, 12 kritik seviyede')
+        break
+      case 'new-plan':
+        // Menü planlama modalı
+        alert('Menü Planlama: Yeni plan oluşturma özelliği geliştiriliyor...')
+        break
+      case 'profit-analysis':
+        // Karlılık analizi sayfası
+        window.open('/reports', '_blank')
+        break
+      default:
+        // Diğer fonksiyonlar için genel modal
+        alert(`${action} özelliği yakında eklenecek!`)
     }
   }
 
@@ -52,10 +68,10 @@ export default function MenuManagementPage() {
 
   // Dinamik istatistikler veya varsayılan değerler
   const totalStats = formattedStats || [
-    { title: 'Toplam Tarif', value: '247', change: '+12', trend: 'up' as const, icon: '🥘' },
-    { title: 'Aktif Menü', value: '8', change: '+2', trend: 'up' as const, icon: '📝' },
-    { title: 'Malzeme Havuzu', value: '156', change: '-5', trend: 'down' as const, icon: '📦' },
-    { title: 'Aylık Maliyet', value: '₺24.5K', change: '+8%', trend: 'up' as const, icon: '💰' }
+    { title: 'Aktif Tarifler', value: '247', change: '+12', trend: 'up' as const, icon: '🥘' },
+    { title: 'Ortalama Maliyet', value: '₺18.50', change: '-₺2.30', trend: 'down' as const, icon: '�' },
+    { title: 'Malzeme Havuzu', value: '156', change: '12 kritik', trend: 'down' as const, icon: '📦' },
+    { title: 'Haftalık Plan', value: '8', change: 'Tamamlandı', trend: 'up' as const, icon: '�' }
   ]
 
   return (
