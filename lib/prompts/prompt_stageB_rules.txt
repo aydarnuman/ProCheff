@@ -1,0 +1,47 @@
+Aşağıdaki metinden yemek üretimi ve hizmetle ilgili özel koşulları çıkar.
+
+GÖREV:
+"Servis, pişirme, hijyen, numune, belge, denetim" gibi özel gereksinimleri tespit et.
+
+ARANACAK TEMALAR:
+- Servis şekli (sıcak/soğuk/termostatik/self servis)
+- Pişirme usulü (yağ türü, tuz oranı, diyet, helal)  
+- Hijyen (HACCP, ISO, temizlik, personel)
+- Belgeler (sertifika, numune, analiz, denetim)
+- Taşıma ve depolama koşulları
+- Özel beslenme gereksinimleri
+
+ÇIKTI FORMATI:
+{
+  "özel_koşullar": [
+    "Helal sertifikalı et kullanılacak",
+    "Sıcak servis yapılacak", 
+    "HACCP sertifikası gerekli"
+  ],
+  "hijyen_koşullar": [
+    "ISO 22000 standardına uygun",
+    "Personel sağlık raporu"
+  ],
+  "servis_koşullar": [
+    "Sıcak servis",
+    "Self servis sistemi"
+  ],
+  "sayfa_referansları": [1, 3, 5]
+}
+
+KURALLAR:
+- Tek cümlelik maddeleri al, paragrafları özetle
+- Aynı anlama gelenleri birleştir (örn. "yemek sıcak servis edilir" + "sıcak sunum yapılır" = "Sıcak servis")
+- Tahmin ekleme, metinde yoksa alma
+- Belirsiz ifadeleri netleştir
+- Sayfa numarası varsa ekle
+- Teknik terimleri olduğu gibi bırak (HACCP, ISO vb.)
+
+ÖRNEK GİRDİ:
+"Tüm yemekler helal sertifikalı etlerden hazırlanacak. Servis sıcak olarak yapılacaktır. 
+HACCP prosedürlerine uygun hijyen sağlanacak."
+
+SADECE JSON FORMATINDA CEVAP VER, BAŞKA AÇIKLAMA EKLEME.
+
+ŞARTNAMİ METNİ:
+{text}

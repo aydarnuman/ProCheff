@@ -1,0 +1,56 @@
+{
+  "id": "spec_example_003",
+  "fileName": "istanbul_okul_şartname.docx",
+  "uploadDate": "2024-10-09T11:20:00.000Z",
+  "institutionProfile": {
+    "kurum": "İstanbul Anadolu Lisesi",
+    "kurumKodu": "IAL-2024-YG",
+    "tarih": "2024-10-09T00:00:00.000Z",
+    "porsiyon": {
+      "et": 110,
+      "tavuk": 90,
+      "sebze": 40,
+      "yag": 18,
+      "tuz": 2.5,
+      "pirinc": 75,
+      "bulgur": 55,
+      "ekmek": 90
+    },
+    "menuTipi": "Öğrenci menüsü",
+    "ogunSayisi": 1,
+    "kisiSayisi": 800,
+    "ozelKosullar": ["Helal sertifikalı", "Gençlere uygun", "Besleyici"],
+    "hijyenKosullar": ["HACCP", "Okul hijyen standardı"],
+    "servisKosullar": ["Sıcak servis", "Self servis"],
+    "maliyetSiniri": {
+      "maksimum": 18.00
+    },
+    "teslimKosullar": {
+      "adres": "İstanbul Anadolu Lisesi Yemekhane",
+      "sıklık": "Günlük"
+    },
+    "metadata": {
+      "processedAt": "2024-10-09T11:35:00.000Z",
+      "confidence": 0.85,
+      "sourceFile": "istanbul_okul_şartname.docx",
+      "pageCount": 6
+    }
+  },
+  "tags": {
+    "region": "İstanbul",
+    "institutionType": "Okul",
+    "personCount": 800,
+    "gramajCategory": "Orta"
+  },
+  "fingerprint": {
+    "gramajVector": [0.55, 0.45, 0.4, 0.6, 0.5, 0.75, 0.55, 0.6],
+    "requirementVector": [1, 0, 1, 0, 0],
+    "institutionVector": [0, 0, 1, 0],
+    "complexityScore": 0.52
+  },
+  "metadata": {
+    "processingVersion": "1.0.0",
+    "confidence": 0.85,
+    "sourceHash": "x1y2z3a4b5c6d7e8f9g0h1i2j3k4l5m6"
+  }
+}

@@ -1,0 +1,30 @@
+Aşağıdaki teknik şartnameden sadece "gramaj ve porsiyon" içeren ifadeleri bul.  
+
+GÖREV: 
+PDF içerisinden yemek malzemelerinin gram, adet, ml, lt gibi ölçü birimlerini içeren ifadeleri tespit et.
+
+ÇIKTI FORMATI:
+[
+  {"ürün": "et", "gram": 120, "birim": "g", "sayfa": 1, "güven": 0.9},
+  {"ürün": "pilav", "gram": 80, "birim": "g", "sayfa": 2, "güven": 0.8},
+  {"ürün": "ekmek", "gram": 100, "birim": "g", "sayfa": 1, "güven": 0.7}
+]
+
+KURALLAR:
+- "gram", "gr", "gr.", "adet", "porsiyon", "ml", "lt", "kaşık", "bardak" içeren satırları değerlendir
+- Birim yoksa tahmin etme → null yaz  
+- Sayfa numarası varsa dahil et, yoksa 0 yaz
+- Her satırın sonunda 0-1 arasında "güven" değeri üret (ne kadar kesin olduğun)
+- Metin dışına çıkma, sadece sayı ve birim al
+- Belirsiz ifadeleri düşük güven ile işaretle
+- "yaklaşık", "civarı", "ortalama" gibi kelimeler varsa güven azalt
+
+ÖRNEK GİRDİ METNI:
+"Et yemeklerinde porsiyon başına 120 gram kırmızı et kullanılacak..."
+"Pilav için 80 gr pirinç gereklidir"  
+"Her kişi için 2 adet ekmek verilecektir"
+
+SADECE JSON FORMATINDA CEVAP VER, BAŞKA AÇIKLAMA EKLEME.
+
+ŞARTNAMİ METNİ:
+{text}

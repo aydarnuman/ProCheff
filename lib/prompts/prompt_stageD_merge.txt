@@ -1,0 +1,63 @@
+Aşağıdaki 5 ayrı JSON çıktısını birleştir ve tutarlı tek profil oluştur.
+
+GÖREV:
+Büyük PDF'lerde parçalanan (chunk) analizleri birleştirerek tutarlı kurum profili oluştur.
+
+ÇIKTI FORMATI:
+{
+  "kurum": "En sık geçen kurum adı",
+  "kurumKodu": "Varsa kod",
+  "menü_tipi": "Birleştirilmiş menü tipi", 
+  "ogunSayisi": 3,
+  "kisiSayisi": 450,
+  "porsiyon": {
+    "et": 120,  // ortalama değer
+    "tavuk": 100,
+    "sebze": 50,
+    "yag": 15,
+    "tuz": 2,
+    "pirinc": 80,
+    "bulgur": 60,
+    "ekmek": 100
+  },
+  "özel_koşullar": [
+    "Birleştirilmiş özel koşullar"
+  ],
+  "hijyen_koşullar": [
+    "Birleştirilmiş hijyen koşulları"
+  ],
+  "servis_koşullar": [
+    "Birleştirilmiş servis koşulları"
+  ],
+  "maliyet_siniri": {
+    "minimum": null,
+    "maksimum": 25.00  // en güvenilir değer
+  },
+  "teslim_koşullar": {
+    "adres": "Birleştirilmiş adres",
+    "sıklık": "Günlük"
+  },
+  "güven_ortalaması": 0.84,
+  "merge_notlari": [
+    "5 chunk birleştirildi",
+    "Et gramajı 3 farklı değer ortalaması" 
+  ]
+}
+
+BİRLEŞTİRME KURALLARI:
+- Aynı ürün birden fazla listede varsa aritmetik ortalamasını al
+- Çelişen değerlerde en yüksek "güven" değerini seç
+- Kurum adı farklıysa en sık geçenini al, çelişkiyorsa not ekle
+- Özel koşulları birleştirip tekrarlayanları sil
+- Maliyet limitlerinde muhafazakar yaklaşım (düşük olanı seç)
+- Kişi sayısı farklıysa ortalama al
+- Güven skorları ortalamasını al
+
+GİRDİ CHUNK'LARI:
+{chunk1}
+{chunk2} 
+{chunk3}
+{chunk4}
+{chunk5}
+
+SADECE JSON FORMATINDA CEVAP VER, SONUNDA BİRLEŞTİRME NOTLARI EKLE.

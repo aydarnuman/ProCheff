@@ -1,0 +1,56 @@
+{
+  "id": "spec_example_001",
+  "fileName": "ankara_pmyo_şartname.pdf",
+  "uploadDate": "2024-10-10T08:00:00.000Z",
+  "institutionProfile": {
+    "kurum": "Ankara Üniversitesi PMYO",
+    "kurumKodu": "AU-PMYO-001",
+    "tarih": "2024-10-10T00:00:00.000Z",
+    "porsiyon": {
+      "et": 120,
+      "tavuk": 100,
+      "sebze": 60,
+      "yag": 20,
+      "tuz": 3,
+      "pirinc": 80,
+      "bulgur": 60,
+      "ekmek": 100
+    },
+    "menuTipi": "Günlük 3 öğün",
+    "ogunSayisi": 3,
+    "kisiSayisi": 450,
+    "ozelKosullar": ["Helal sertifikalı", "Sıcak servis", "Yerel tedarikçi"],
+    "hijyenKosullar": ["HACCP", "ISO 22000"],
+    "servisKosullar": ["Sıcak servis", "Kişisel hijyen"],
+    "maliyetSiniri": {
+      "maksimum": 24.50
+    },
+    "teslimKosullar": {
+      "adres": "Ankara Üniversitesi Kampüsü",
+      "sıklık": "Günlük"
+    },
+    "metadata": {
+      "processedAt": "2024-10-10T08:15:00.000Z",
+      "confidence": 0.92,
+      "sourceFile": "ankara_pmyo_şartname.pdf",
+      "pageCount": 8
+    }
+  },
+  "tags": {
+    "region": "Ankara",
+    "institutionType": "MYO",
+    "personCount": 450,
+    "gramajCategory": "Orta"
+  },
+  "fingerprint": {
+    "gramajVector": [0.6, 0.5, 0.6, 0.67, 0.6, 0.8, 0.6, 0.67],
+    "requirementVector": [1, 0, 1, 0, 1],
+    "institutionVector": [1, 0, 0, 1],
+    "complexityScore": 0.75
+  },
+  "metadata": {
+    "processingVersion": "1.0.0",
+    "confidence": 0.92,
+    "sourceHash": "d4f8a9b2c1e3f5g7h8i9j0k1l2m3n4o5"
+  }
+}

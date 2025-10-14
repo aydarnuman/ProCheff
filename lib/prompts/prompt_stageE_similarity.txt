@@ -1,0 +1,65 @@
+Aşağıdaki yeni kurum profili ile veritabanındaki mevcut profilleri karşılaştır ve benzerlik analizi yap.
+
+GÖREV:
+Yeni profil ile mevcut kayıtlar arasında benzerlik oranı hesapla ve detaylı karşılaştırma yap.
+
+ÇIKTI FORMATI:
+[
+  {
+    "karşılaştırılan_kurum": "Ankara Üniversitesi PMYO",
+    "benzerlik_%": 87,
+    "benzer_nitelikler": [
+      "Et gramajı aynı (120g)",
+      "Aynı bölge (Ankara)", 
+      "Benzer kurum tipi (Üniversite)",
+      "Helal koşulu ortak"
+    ],
+    "farklı_nitelikler": [
+      "Kişi sayısı farkı: 450 vs 380",
+      "Maliyet limiti: ₺25 vs ₺23"
+    ],
+    "güven_skoru": 0.9,
+    "öneri": "Yüksek benzerlik, referans alınabilir"
+  }
+]
+
+BENZERLIK HESAPLAMA KURALLARI:
+- **Gramaj Karşılaştırması (40% ağırlık):**
+  - Et gramajı ±10g ise %100 benzer
+  - ±20g ise %80 benzer  
+  - ±30g+ ise %50 benzer
+
+- **Kurum Tipi Karşılaştırması (25% ağırlık):**
+  - Aynı tip (Üniversite-Üniversite) ise +25%
+  - Benzer tip (Üniversite-MYO) ise +15%
+  - Farklı tip (Üniversite-Hastane) ise -10%
+
+- **Özel Koşul Karşılaştırması (20% ağırlık):**
+  - Her ortak koşul +5%
+  - Kritik koşul çelişkisi (helal vs normal) -15%
+
+- **Bölge/Lokasyon (10% ağırlık):**
+  - Aynı şehir +10%
+  - Aynı bölge +5%
+
+- **Kişi Sayısı (5% ağırlık):**
+  - ±100 kişi ise benzer say
+  - Büyük fark varsa not et
+
+SIRALAMA VE ÖNERİ KURALLARI:
+- %80+ → "Çok benzer, referans alınabilir"
+- %60-80 → "Orta benzerlik, dikkatli adaptasyon"  
+- %40-60 → "Düşük benzerlik, kısmi referans"
+- %40↓ → "Benzer değil"
+
+- Sonuçları en yüksek benzerlikten düşüğe sırala
+- Maksimum 5 sonuç döndür
+- Her karşılaştırma için açık gerekçe ver
+
+YENİ PROFİL:
+{new_profile}
+
+VERİTABANI PROFİLLERİ:  
+{existing_profiles}
+
+SADECE JSON FORMATINDA CEVAP VER, BAŞKA AÇIKLAMA EKLEME.
