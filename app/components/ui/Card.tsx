@@ -49,9 +49,9 @@ export function BaseCard({
   return (
     <div
       className={`
-        rounded-xl border transition-all duration-200
-        ${hover ? 'hover:shadow-sm hover:-translate-y-0.5' : ''}
-        ${onClick ? 'cursor-pointer' : ''}
+        rounded-xl border transition-all duration-300 ease-out
+        ${hover ? 'hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02]' : ''}
+        ${onClick ? 'cursor-pointer active:scale-95' : ''}
         ${paddingClasses[padding]}
         ${className}
       `}

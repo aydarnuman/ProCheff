@@ -16,12 +16,14 @@ export function SkeletonBox({
 }) {
   return (
     <div 
-      className={`
-        bg-gray-700/50 rounded ${height} ${className}
-        ${animated ? 'animate-pulse' : ''}
-      `}
-      role="status"
-      aria-label="Yükleniyor"
+      className={`rounded ${height} ${className} ${animated ? 'animate-pulse' : ''}`}
+      style={{
+        background: animated 
+          ? 'linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-tertiary) 50%, var(--bg-secondary) 75%)'
+          : 'var(--bg-tertiary)',
+        backgroundSize: animated ? '200% 100%' : '100% 100%',
+        animation: animated ? 'shimmer 1.5s ease-in-out infinite' : 'none'
+      }}
     />
   )
 }
@@ -31,30 +33,33 @@ export function SkeletonBox({
  */
 export function SkeletonCard() {
   return (
-    <div className="bg-gray-800/40 backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50">
-      <div className="animate-pulse">
-        
-        {/* Header */}
-        <div className="flex items-center space-x-4 mb-4">
-          <SkeletonBox className="w-12 h-12 rounded-full" animated={false} />
-          <div className="flex-1">
-            <SkeletonBox className="w-3/4 mb-2" height="h-5" animated={false} />
-            <SkeletonBox className="w-1/2" height="h-3" animated={false} />
-          </div>
+    <div 
+      className="rounded-xl p-6 border transition-all duration-300"
+      style={{ 
+        backgroundColor: 'var(--bg-secondary)',
+        borderColor: 'var(--border-primary)'
+      }}
+    >
+      {/* Header */}
+      <div className="flex items-center space-x-4 mb-4">
+        <SkeletonBox className="w-12 h-12 rounded-xl" />
+        <div className="flex-1">
+          <SkeletonBox className="w-3/4 mb-2" height="h-5" />
+          <SkeletonBox className="w-1/2" height="h-3" />
         </div>
+      </div>
 
-        {/* Content Lines */}
-        <div className="space-y-3">
-          <SkeletonBox className="w-full" height="h-3" animated={false} />
-          <SkeletonBox className="w-4/5" height="h-3" animated={false} />
-          <SkeletonBox className="w-3/5" height="h-3" animated={false} />
-        </div>
+      {/* Content Lines */}
+      <div className="space-y-3 mb-6">
+        <SkeletonBox className="w-full" height="h-3" />
+        <SkeletonBox className="w-4/5" height="h-3" />
+        <SkeletonBox className="w-3/5" height="h-3" />
+      </div>
 
-        {/* Footer */}
-        <div className="flex justify-between items-center mt-6">
-          <SkeletonBox className="w-20" height="h-8" animated={false} />
-          <SkeletonBox className="w-16" height="h-8" animated={false} />
-        </div>
+      {/* Footer */}
+      <div className="flex justify-between items-center">
+        <SkeletonBox className="w-20" height="h-8" />
+        <SkeletonBox className="w-16" height="h-6" />
       </div>
     </div>
   )

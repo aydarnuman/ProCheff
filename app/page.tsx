@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, Zap, Target } from 'lucide-react'
+import { ArrowRight, Zap, Target, BarChart3, Database, Settings } from 'lucide-react'
 import { quickStats, workflowSteps, dataModules, managementTools } from '@/lib/data/dashboard'
 import { getIcon, getTrendIcon, getPriorityColor } from '@/lib/utils/icons'
 import { StatCard, InfoCard } from '@/app/components/ui'
@@ -9,18 +9,23 @@ import { StatCard, InfoCard } from '@/app/components/ui'
 export default function DashboardPage() {
 
   return (
-    <div className="min-h-screen p-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="min-h-screen p-4 sm:p-6" style={{ backgroundColor: 'var(--bg-primary)' }}>
       
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
-              🎯 Teklif Zekâsı Dashboard
-            </h1>
-            <p style={{ color: 'var(--text-secondary)' }}>
-              AI destekli tender optimizasyon sistemi
-            </p>
+          <div className="flex items-center space-x-3">
+            <div className="p-2 rounded-xl" style={{ backgroundColor: 'var(--accent-primary)' }}>
+              <Target size={28} className="text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
+                Teklif Zekâsı Dashboard
+              </h1>
+              <p className="text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>
+                AI destekli tender optimizasyon sistemi
+              </p>
+            </div>
           </div>
           
           <div className="flex items-center space-x-2 px-4 py-2 rounded-xl" 
@@ -35,7 +40,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
         {quickStats.map((stat) => (
           <StatCard
             key={stat.title}
@@ -50,14 +55,16 @@ export default function DashboardPage() {
 
       {/* Main Workflow Section */}
       <div className="mb-8">
-        <div className="flex items-center space-x-2 mb-4">
-          <Zap size={20} style={{ color: 'var(--accent-primary)' }} />
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="p-2 rounded-lg" style={{ backgroundColor: 'var(--accent-primary)' }}>
+            <Zap size={18} className="text-white" />
+          </div>
           <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
-            🌟 Ana İş Akışı
+            Ana İş Akışı
           </h2>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {workflowSteps.map((step) => (
             <InfoCard
               key={step.href}
@@ -75,18 +82,20 @@ export default function DashboardPage() {
       </div>
 
       {/* Data & Intelligence Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         
         {/* Zeka & Veriler */}
         <div>
-          <div className="flex items-center space-x-2 mb-4">
-            <span className="text-lg">📊</span>
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="p-2 rounded-lg" style={{ backgroundColor: 'var(--accent-secondary)' }}>
+              <BarChart3 size={18} className="text-white" />
+            </div>
             <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
               Zekâ & Veriler
             </h2>
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-3">
             {dataModules.map((module) => (
               <InfoCard
                 key={module.href}
@@ -104,14 +113,16 @@ export default function DashboardPage() {
 
         {/* Yönetim Araçları */}
         <div>
-          <div className="flex items-center space-x-2 mb-4">
-            <span className="text-lg">⚙️</span>
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="p-2 rounded-lg" style={{ backgroundColor: 'var(--status-warning)' }}>
+              <Settings size={18} className="text-white" />
+            </div>
             <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
               Yönetim
             </h2>
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-3">
             {managementTools.map((tool) => (
               <InfoCard
                 key={tool.href}
@@ -144,14 +155,15 @@ export default function DashboardPage() {
           
           <Link href="/proposal-panel">
             <button 
-              className="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-sm"
+              className="flex items-center space-x-2 px-4 sm:px-6 py-3 sm:py-2 rounded-lg font-medium transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-0.5 hover:scale-105 active:scale-95 text-sm sm:text-base"
               style={{
                 backgroundColor: 'var(--accent-primary)',
                 color: 'white'
               }}
             >
               <Zap size={16} />
-              <span>Teklif Panelini Başlat</span>
+              <span className="hidden sm:inline">Teklif Panelini Başlat</span>
+              <span className="sm:hidden">Başlat</span>
               <ArrowRight size={16} />
             </button>
           </Link>

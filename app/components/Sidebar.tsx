@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { 
   Home, Target, FileText, ChefHat, Calculator, Database, 
   TrendingUp, BookOpen, BarChart3, Settings, X, Menu,
-  ChevronDown, ChevronRight, ShoppingCart
+  ChevronDown, ChevronRight, ShoppingCart, Zap, Wrench
 } from 'lucide-react'
 
 interface MenuItem {
@@ -26,13 +26,13 @@ interface MenuGroup {
 // İkon map'i - string'den React component'e
 const iconMap: Record<string, any> = {
   Home, Target, FileText, ChefHat, Calculator, Database, 
-  TrendingUp, BookOpen, BarChart3, Settings, ShoppingCart
+  TrendingUp, BookOpen, BarChart3, Settings, ShoppingCart, Zap, Wrench
 }
 
 const menuGroups: MenuGroup[] = [
   {
-    title: '🌟 Ana İş Akışı',
-    icon: '🌟',
+    title: 'Ana İş Akışı',
+    icon: 'Zap',
     items: [
       {
         id: 'dashboard',
@@ -68,8 +68,8 @@ const menuGroups: MenuGroup[] = [
     ]
   },
   {
-    title: '📊 Zekâ & Veriler',
-    icon: '📊',
+    title: 'Zekâ & Veriler',
+    icon: 'BarChart3',
     items: [
       {
         id: 'spec-database',
@@ -94,8 +94,8 @@ const menuGroups: MenuGroup[] = [
     ]
   },
   {
-    title: '⚙️ Yönetim',
-    icon: '⚙️',
+    title: 'Yönetim',
+    icon: 'Wrench',
     items: [
       {
         id: 'menu-management',
@@ -127,7 +127,7 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const pathname = usePathname()
   const [expandedGroups, setExpandedGroups] = useState<string[]>([
-    '🌟 Ana İş Akışı', '📊 Zekâ & Veriler', '⚙️ Yönetim'
+    'Ana İş Akışı', 'Zekâ & Veriler', 'Yönetim'
   ])
 
   const toggleGroup = (groupTitle: string) => {
@@ -182,17 +182,23 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto max-h-screen">
           {menuGroups.map((group) => {
             const isExpanded = expandedGroups.includes(group.title)
+            const GroupIcon = iconMap[group.icon]
             
             return (
               <div key={group.title} className="space-y-1">
                 {/* Group Header */}
                 <button
                   onClick={() => toggleGroup(group.title)}
-                  className="w-full flex items-center justify-between px-3 py-2 text-left rounded-xl transition-colors hover:bg-gray-700/30"
+                  className="w-full flex items-center justify-between px-3 py-2 text-left rounded-xl transition-all duration-200 ease-out hover:bg-gray-700/30 hover:scale-102"
                 >
-                  <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
-                    {group.title}
-                  </span>
+                  <div className="flex items-center space-x-2">
+                    {GroupIcon && (
+                      <GroupIcon size={16} style={{ color: 'var(--accent-primary)' }} />
+                    )}
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
+                      {group.title}
+                    </span>
+                  </div>
                   {isExpanded ? (
                     <ChevronDown size={16} style={{ color: 'var(--text-muted)' }} />
                   ) : (
@@ -211,10 +217,10 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                         <Link key={item.id} href={item.href} onClick={onToggle}>
                           <div
                             className={`
-                              group flex items-center px-3 py-2.5 rounded-xl transition-all duration-200
+                              group flex items-center px-3 py-2.5 rounded-xl transition-all duration-300 ease-out
                               ${isActive 
-                                ? 'shadow-sm' 
-                                : 'hover:bg-gray-700/30'
+                                ? 'shadow-lg scale-105' 
+                                : 'hover:bg-gray-700/30 hover:scale-102 hover:-translate-y-0.5'
                               }
                             `}
                             style={{
