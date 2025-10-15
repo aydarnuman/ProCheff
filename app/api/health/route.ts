@@ -41,12 +41,9 @@ export async function GET() {
       }
     };
 
-    // Check if any service is down
-    const hasUnhealthyService = Object.values(healthData.services).some(
-      service => service === 'disconnected' || service === 'unavailable' || service === 'error'
-    );
-
-    if (hasUnhealthyService) {
+    // Sadece kritik servisler (DB/Storage) down ise unhealthy say
+    const criticalDown = healthData.services.database === 'disconnected' || healthData.services.storage === 'error';
+    if (criticalDown) {
       healthData.status = 'unhealthy';
     }
 
