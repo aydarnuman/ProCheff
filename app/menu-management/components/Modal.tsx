@@ -22,18 +22,18 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
       />
       
       {/* Modal */}
-      <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b">
+      <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto border border-gray-200">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
           <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded-full"
+            className="p-1 hover:bg-gray-200 rounded-full transition-colors"
           >
-            <X size={20} className="text-gray-500" />
+            <X size={20} className="text-gray-600" />
           </button>
         </div>
         
-        <div className="p-4">
+        <div className="p-4 bg-white">
           {children}
         </div>
       </div>

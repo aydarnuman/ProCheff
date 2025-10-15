@@ -145,6 +145,16 @@ export default function MenuManagementPage() {
           
           <div className="flex gap-3">
             <Button 
+              variant="success" 
+              size="md" 
+              className="flex items-center gap-2"
+              onClick={() => setAddIngredientModalOpen(true)}
+            >
+              <Plus size={18} />
+              Yeni Malzeme Ekle
+            </Button>
+            
+            <Button 
               variant="primary" 
               size="md" 
               className="flex items-center gap-2"

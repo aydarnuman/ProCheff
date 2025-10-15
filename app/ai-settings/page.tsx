@@ -7,6 +7,64 @@ import { Bot, Settings, Zap, DollarSign, Target, Link } from 'lucide-react'
 export default function AISettingsPage() {
   const [activeTab, setActiveTab] = useState<string>('models')
   const [selectedModel, setSelectedModel] = useState<string>('claude-3-haiku')
+  const [integrationStates, setIntegrationStates] = useState<{[key: string]: string}>({
+    'anthropic': 'connected',
+    'openai': 'available',
+    'google-cloud': 'available',
+    'gemini': 'available',
+    'market-apis': 'development'
+  })
+  const [apiKeys, setApiKeys] = useState<{[key: string]: string}>({
+    'anthropic': '••••••••••••••••sk_ant_1234',
+    'openai': 'Yapılandırılmamış',
+    'google-cloud': 'Yapılandırılmamış',
+    'gemini': 'Yapılandırılmamış',
+    'market-apis': 'Geliştiriliyor'
+  })
+  const [showApiKeyModal, setShowApiKeyModal] = useState<string | null>(null)
+  const [tempApiKey, setTempApiKey] = useState<string>('')
+
+  const handleConnectionToggle = (integrationId: string) => {
+    const currentStatus = integrationStates[integrationId]
+    
+    if (currentStatus === 'connected') {
+      // Bağlantıyı kes
+      setIntegrationStates(prev => ({
+        ...prev,
+        [integrationId]: 'available'
+      }))
+      setApiKeys(prev => ({
+        ...prev,
+        [integrationId]: 'Yapılandırılmamış'
+      }))
+      console.log(`${integrationId} bağlantısı kesildi`)
+      alert(`${integrationId} servisi bağlantısı kesildi`)
+    } else if (currentStatus === 'available') {
+      // Modal aç
+      setShowApiKeyModal(integrationId)
+      setTempApiKey('')
+    } else if (currentStatus === 'development') {
+      alert('Bu entegrasyon henüz geliştirme aşamasında. Yakında kullanılabilir olacak.')
+    }
+  }
+
+  const handleApiKeySubmit = () => {
+    if (showApiKeyModal && tempApiKey.trim()) {
+      setApiKeys(prev => ({
+        ...prev,
+        [showApiKeyModal]: `••••••••••••••••${tempApiKey.slice(-4)}`
+      }))
+      setIntegrationStates(prev => ({
+        ...prev,
+        [showApiKeyModal]: 'connected'
+      }))
+      setShowApiKeyModal(null)
+      setTempApiKey('')
+      alert(`${showApiKeyModal} başarıyla bağlandı!`)
+    } else {
+      alert('Geçerli bir API key giriniz!')
+    }
+  }
 
   const tabs = [
     { id: 'models', title: 'AI Modeller', icon: '🤖' },
@@ -128,47 +186,47 @@ export default function AISettingsPage() {
     {
       id: 'anthropic',
       name: 'Anthropic Claude',
-      status: 'connected',
+      status: integrationStates['anthropic'],
       description: 'Claude AI modelleri aktif',
       icon: '🤖',
-      apiKey: '••••••••••••••••sk_ant_1234',
-      lastSync: '5 dakika önce'
+      apiKey: apiKeys['anthropic'],
+      lastSync: integrationStates['anthropic'] === 'connected' ? '5 dakika önce' : 'Hiç'
     },
     {
       id: 'openai',
       name: 'OpenAI GPT',
-      status: 'available',
+      status: integrationStates['openai'],
       description: 'GPT modellerine erişim için API key gerekli',
       icon: '⚡',
-      apiKey: 'Yapılandırılmamış',
-      lastSync: 'Hiç'
+      apiKey: apiKeys['openai'],
+      lastSync: integrationStates['openai'] === 'connected' ? '2 dakika önce' : 'Hiç'
     },
     {
       id: 'google-cloud',
       name: 'Google Cloud AI',
-      status: 'available',
+      status: integrationStates['google-cloud'],
       description: 'Vertex AI ve Gemini modelleri',
       icon: '☁️',
-      apiKey: 'Yapılandırılmamış',
-      lastSync: 'Hiç'
+      apiKey: apiKeys['google-cloud'],
+      lastSync: integrationStates['google-cloud'] === 'connected' ? '1 dakika önce' : 'Hiç'
     },
     {
       id: 'gemini',
       name: 'Google Gemini Pro',
-      status: 'available',
+      status: integrationStates['gemini'],
       description: 'Piyasa analizi ve fiyat tahminleri için optimize edilmiş',
       icon: '💎',
-      apiKey: 'Yapılandırılmamış',
-      lastSync: 'Hiç',
+      apiKey: apiKeys['gemini'],
+      lastSync: integrationStates['gemini'] === 'connected' ? 'Az önce' : 'Hiç',
       features: ['Web Scraping', 'Fiyat Analizi', 'Trend Tahmini']
     },
     {
       id: 'market-apis',
       name: 'Market API Entegrasyonları',
-      status: 'development',
+      status: integrationStates['market-apis'],
       description: 'A101, BİM, ŞOK, Migros fiyat API\'leri',
       icon: '🛒',
-      apiKey: 'Geliştiriliyor',
+      apiKey: apiKeys['market-apis'],
       lastSync: 'Henüz yok',
       markets: ['A101', 'BİM', 'ŞOK', 'Migros', 'Metro', 'Tarım Kredi']
     }
@@ -492,14 +550,21 @@ export default function AISettingsPage() {
                 </div>
               </div>
               
-              <button className={`
-                w-full mt-4 py-3 rounded-xl font-medium transition-all duration-300
-                ${integration.status === 'connected' 
-                  ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' 
-                  : 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
-                }
-              `}>
-                {integration.status === 'connected' ? 'Bağlantıyı Kes' : 'Bağlan'}
+              <button 
+                onClick={() => handleConnectionToggle(integration.id)}
+                className={`
+                  w-full mt-4 py-3 rounded-xl font-medium transition-all duration-300
+                  ${integration.status === 'connected' 
+                    ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' 
+                    : integration.status === 'development'
+                    ? 'bg-gray-500/20 text-gray-400 cursor-not-allowed'
+                    : 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
+                  }
+                `}
+                disabled={integration.status === 'development'}
+              >
+                {integration.status === 'connected' ? 'Bağlantıyı Kes' : 
+                 integration.status === 'development' ? 'Geliştiriliyor' : 'Bağlan'}
               </button>
             </div>
           ))}
@@ -1064,6 +1129,52 @@ export default function AISettingsPage() {
                   <option>EUR (€)</option>
                 </select>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* API Key Modal */}
+      {showApiKeyModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-gray-800 rounded-2xl p-6 max-w-md w-full mx-4 border border-gray-700">
+            <div className="mb-4">
+              <h3 className="text-white text-lg font-semibold mb-2">API Key Ekle</h3>
+              <p className="text-gray-400 text-sm">
+                {showApiKeyModal} servisine bağlanmak için API key girin
+              </p>
+            </div>
+            
+            <div className="mb-4">
+              <label className="block text-gray-300 text-sm font-medium mb-2">
+                API Key
+              </label>
+              <input
+                type="password"
+                value={tempApiKey}
+                onChange={(e) => setTempApiKey(e.target.value)}
+                placeholder="API key'inizi buraya girin..."
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                autoFocus
+              />
+            </div>
+            
+            <div className="flex space-x-3">
+              <button
+                onClick={handleApiKeySubmit}
+                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                Bağlan
+              </button>
+              <button
+                onClick={() => {
+                  setShowApiKeyModal(null)
+                  setTempApiKey('')
+                }}
+                className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                İptal
+              </button>
             </div>
           </div>
         </div>

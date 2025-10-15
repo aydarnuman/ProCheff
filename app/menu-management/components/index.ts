@@ -9,4 +9,5 @@ export type { NutritionModalProps } from './NutritionModal'
 
 export { AIRecipeGenerator } from './AIRecipeGenerator'
 
-export { Modal, StockStatusModal, MenuPlanModal, RecipeEditModal, CategoryManagementModal, AddIngredientModal } from './Modal'
+export { Modal, StockStatusModal, MenuPlanModal, RecipeEditModal, CategoryManagementModal } from './Modal'
+export { AddIngredientModal } from './AddIngredientModal'
