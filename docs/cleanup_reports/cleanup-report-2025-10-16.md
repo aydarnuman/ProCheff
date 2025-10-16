@@ -1,4 +1,4 @@
-# ProCheff Smart Cleanup Report
+#  ProCheff Smart Cleanup Report
 ## 📅 Temizlik Tarihi: 16 Ekim 2025
 
 ---
@@ -133,12 +133,12 @@
 
 #### Acil Durum Prosedürü
 ```bash
-# Son commit'i geri al
+#  Son commit'i geri al
 git revert HEAD
 
-# Veya arşivden dosya geri getir
+#  Veya arşivden dosya geri getir
 cp ARCHIVE/2025-10-16/globals.css.backup app/
-```
+```bash
 
 #### Commit Bilgisi
 - **Pre-cleanup Commit**: `ad504d83`

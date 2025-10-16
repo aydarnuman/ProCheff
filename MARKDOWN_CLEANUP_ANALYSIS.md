@@ -1,4 +1,4 @@
-# Markdown Cleanup Decision Tree Analysis
+#  Markdown Cleanup Decision Tree Analysis
 ## 📅 Analiz Tarihi: 16 Ekim 2025
 
 ### 📊 Risk Skorlama Sistemi (Markdown Docs)

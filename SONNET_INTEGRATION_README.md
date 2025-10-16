@@ -1,4 +1,4 @@
-# Sonnet Integration Quick Start Guide
+#  Sonnet Integration Quick Start Guide
 
 Bu README, Sonnet ekibinin ProCheff sistemine nasıl entegre olacağını açıklar.
 
@@ -18,11 +18,11 @@ Bu README, Sonnet ekibinin ProCheff sistemine nasıl entegre olacağını açık
 
 ProCheff sistemi aşağıdaki endpoint'e POST request gönderecek:
 
-```
+```bash
 POST https://api.sonnet.ai/v1/extract-specification
 Authorization: Bearer {api_key}
 Content-Type: application/json
-```
+```bash
 
 **Request Body:**
 ```typescript
@@ -40,7 +40,7 @@ Content-Type: application/json
     expected_currency?: string  
   }
 }
-```
+```bash
 
 **Response:** SONNET_DELIVERY_SPEC.md'deki JSON schema formatında
 
@@ -56,7 +56,7 @@ const result = await testRunner.runSingleTest(testCases[0]);
 
 // Tüm test suite çalıştırma  
 const results = await testRunner.runAllTests();
-```
+```bash
 
 ### 3. Environment Variables Ayarlayın
 
@@ -66,7 +66,7 @@ const results = await testRunner.runAllTests();
 SONNET_API_KEY=your_provided_api_key
 SONNET_API_URL=https://your-sonnet-endpoint.com/v1
 SONNET_TIMEOUT_MS=30000
-```
+```bash
 
 ### 4. Monitoring Kurulumu
 
@@ -75,7 +75,7 @@ Monitoring dashboard'u için gerekli webhook'ları ayarlayın:
 ```bash
 PAGERDUTY_INTEGRATION_KEY=your_pagerduty_key
 SLACK_WEBHOOK_URL=your_slack_webhook_url
-```
+```bash
 
 ## 🧪 Test Scenarios
 
@@ -102,7 +102,7 @@ Her test case için confidence threshold'ları ve field validation'ları tanıml
 
 ```javascript
 FinalConfidence = 0.2 * ModelSelfConfidence + 0.5 * SourceEvidence + 0.3 * ParsingConfidence
-```
+```bash
 
 **SourceEvidence Skorları:**
 - Table cell: 1.0
@@ -121,7 +121,7 @@ Development sırasında mock responses kullanın:
 import { createMockSonnetResponse } from '@/lib/tests/sonnet-integration';
 
 const mockResponse = createMockSonnetResponse(testCase);
-```
+```bash
 
 ### 2. Integration Testing
 
@@ -131,15 +131,15 @@ ProCheff tarafında test endpoint'i:
 curl -X POST http://localhost:3000/api/sonnet-extraction/extract \
   -H "Content-Type: application/json" \
   -d @test-request.json
-```
+```bash
 
 ### 3. Health Check
 
 Health endpoint implement edin:
 
-```
+```bash
 GET https://api.sonnet.ai/v1/health
-```
+```bash
 
 Response:
 ```json
@@ -148,7 +148,7 @@ Response:
   "version": "1.0.0",
   "latency_ms": 45
 }
-```
+```bash
 
 ## 🚨 Error Handling
 
@@ -169,7 +169,7 @@ ProCheff şu durumlarda otomatik retry yapacak:
   "timestamp": "2025-01-15T10:30:00Z",
   "retry_after_seconds": 60
 }
-```
+```bash
 
 ## 📈 Monitoring Integration
 

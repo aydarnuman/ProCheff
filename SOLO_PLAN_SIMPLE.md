@@ -1,4 +1,4 @@
-# Solo Developer Plan - İhale & Şartname Merkezi
+#  Solo Developer Plan - İhale & Şartname Merkezi
 
 ## 🎯 DURUM RAPORU
 
@@ -20,12 +20,12 @@ Sadece **Frontend UI** eksik! Backend tamamen hazır.
 ### Adım 1: Page Component Oluştur (30 dk)
 
 ```bash
-# Folder oluştur
+#  Folder oluştur
 mkdir -p app/ihale-sartname
 
-# Page component oluştur  
+#  Page component oluştur  
 touch app/ihale-sartname/page.tsx
-```
+```bash
 
 ### Adım 2: Minimal UI (60 dk)
 
@@ -105,7 +105,7 @@ export default function IhaleSartnamePage() {
     </div>
   );
 }
-```
+```bash
 
 Bu kod ile 30 dakikada çalışan bir sistem elde edebilirsiniz!
 
@@ -125,7 +125,7 @@ Temel versiyon çalıştıktan sonra bunları ekleyebilirsiniz:
 
 ## 📂 KLASÖR YAPISI
 
-```
+```bash
 app/
   ihale-sartname/
     page.tsx          # ← Bu dosyayı oluşturacaksınız
@@ -136,7 +136,7 @@ app/api/
   sonnet-extraction/
     extract/
       route.ts        # ← Zaten hazır
-```
+```bash
 
 ---
 

@@ -1,4 +1,4 @@
-# 🔧 ProCheff - VS Code Simple Browser Açma Rehberi
+#  🔧 ProCheff - VS Code Simple Browser Açma Rehberi
 
 ## ✅ Server Durumu
 Next.js Development Server: **ÇALIŞIYOR** 🟢
@@ -33,19 +33,19 @@ Next.js Development Server: **ÇALIŞIYOR** 🟢
 ## 🚀 Hızlı Test Linkleri
 
 **Ana Sayfa:**
-```
+```bash
 http://localhost:3000
-```
+```bash
 
 **AI Tarif Üretici:**
-```
+```bash
 http://localhost:3000/menu-management  
-```
+```bash
 
 **Market Intelligence:**
-```
+```bash
 http://localhost:3000/market-intelligence
-```
+```bash
 
 ## 🔍 Sorun Giderme
 

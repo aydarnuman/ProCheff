@@ -1,4 +1,4 @@
-# ProCheff - Google Cloud Run Deployment Rehberi
+#  ProCheff - Google Cloud Run Deployment Rehberi
 
 ## 🚀 GitHub Secrets Kurulumu
 
@@ -9,13 +9,13 @@ ProCheff'in Google Cloud Run'da otomatik deploy edilmesi için aşağıdaki GitH
 Cloud Shell'de şu komutları çalıştırın:
 
 ```bash
-# Service account oluşturun
+#  Service account oluşturun
 gcloud iam service-accounts create procheff-github-actions \
   --display-name="ProCheff GitHub Actions" \
   --description="GitHub Actions deployment service account" \
   --project=degsan-site
 
-# Gerekli rolleri verin
+#  Gerekli rolleri verin
 gcloud projects add-iam-policy-binding degsan-site \
   --member="serviceAccount:procheff-github-actions@degsan-site.iam.gserviceaccount.com" \
   --role="roles/run.developer"
@@ -27,18 +27,18 @@ gcloud projects add-iam-policy-binding degsan-site \
 gcloud projects add-iam-policy-binding degsan-site \
   --member="serviceAccount:procheff-github-actions@degsan-site.iam.gserviceaccount.com" \
   --role="roles/iam.serviceAccountUser"
-```
+```bash
 
 ### 2. Workload Identity Federation
 
 ```bash
-# Workload Identity Pool oluşturun
+#  Workload Identity Pool oluşturun
 gcloud iam workload-identity-pools create "github-actions" \
     --project="degsan-site" \
     --location="global" \
     --display-name="GitHub Actions Pool"
 
-# GitHub Provider oluşturun
+#  GitHub Provider oluşturun
 gcloud iam workload-identity-pools providers create-oidc "github" \
     --project="degsan-site" \
     --location="global" \
@@ -47,20 +47,20 @@ gcloud iam workload-identity-pools providers create-oidc "github" \
     --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.repository=assertion.repository" \
     --issuer-uri="https://token.actions.githubusercontent.com"
 
-# Service Account impersonation yetkisi
+#  Service Account impersonation yetkisi
 gcloud iam service-accounts add-iam-policy-binding \
     procheff-github-actions@degsan-site.iam.gserviceaccount.com \
     --project="degsan-site" \
     --role="roles/iam.workloadIdentityUser" \
     --member="principalSet://iam.googleapis.com/projects/178180503011/locations/global/workloadIdentityPools/github-actions/attribute.repository/aydarnuman/ProCheff"
 
-# Provider ID'yi alın
+#  Provider ID'yi alın
 gcloud iam workload-identity-pools providers describe "github" \
     --project="degsan-site" \
     --location="global" \
     --workload-identity-pool="github-actions" \
     --format="value(name)"
-```
+```bash
 
 ### 3. GitHub Repository Secrets
 
@@ -80,27 +80,27 @@ Aşağıdaki secret'ı ekleyin:
 
 ### Manuel Deployment
 ```bash
-# Lokal build test
+#  Lokal build test
 npm run build
 
-# Type check
+#  Type check
 npm run type-check
 
-# Google Cloud'a direkt deploy
+#  Google Cloud'a direkt deploy
 npm run deploy
-```
+```bash
 
 ## 📊 Deployment Monitoring
 
 ### Cloud Run Logs
 ```bash
 gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=procheff" --limit 50 --project=degsan-site
-```
+```bash
 
 ### Service URL
 ```bash
 gcloud run services describe procheff --platform managed --region us-west1 --format 'value(status.url)' --project degsan-site
-```
+```bash
 
 ## 🛠️ Troubleshooting
 

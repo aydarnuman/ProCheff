@@ -1,4 +1,4 @@
-# ProCheff - AI Recipe Management System
+#  ProCheff - AI Recipe Management System
 
 ## 🚀 Kurulum Aşaması
 
@@ -6,7 +6,7 @@ Bu proje şu anda kurulum aşamasında. Otomatik deployment pipeline'ı aktif du
 
 ### 📁 Proje Yapısı
 
-```
+```bash
 ProCheff/
 ├── app/                 # Next.js App Router
 ├── components/          # React componentleri
@@ -21,7 +21,7 @@ ProCheff/
 ├── utils/              # Helper fonksiyonlar
 ├── types/              # TypeScript tipleri
 └── constants/          # Sabit değerler
-```
+```bash
 
 ### 🛠️ Teknolojiler
 
@@ -46,30 +46,30 @@ Her main branch'a push otomatik olarak production'a deploy edilir.
 ### 🚀 Geliştirme
 
 ```bash
-# Kurulum
+#  Kurulum
 npm install
 
-# Geliştirme sunucusu
+#  Geliştirme sunucusu
 npm run dev
 
-# VS Code otomatik izinler
-# .vscode/settings.json dosyası mevcut Claude izinlerini otomatik onaylar
+#  VS Code otomatik izinler
+#  .vscode/settings.json dosyası mevcut Claude izinlerini otomatik onaylar
 
-# Non-interactive Claude kullanımı
+#  Non-interactive Claude kullanımı
 cp .env.template .env.local
-# .env.local'e ANTHROPIC_API_KEY ekle
+#  .env.local'e ANTHROPIC_API_KEY ekle
 npm run claude "Yeni component ekle"
-```
+```bash
 
 ### 🤖 Claude AI Otomasyonu
 
 ```bash
-# API üzerinden otomatik (izin istemiyor)
+#  API üzerinden otomatik (izin istemiyor)
 export ANTHROPIC_API_KEY="your_key"
 npm run claude "ProCheff'e recipe form component'i ekle"
 
-# VS Code eklentisi otomatik onay (workspace ayarlı)
-# Artık hiç "Allow" sormuyor
+#  VS Code eklentisi otomatik onay (workspace ayarlı)
+#  Artık hiç "Allow" sormuyor
 
 ## 🔐 Workload Identity Federation
 ProCheff now uses secure Workload Identity Federation for Google Cloud deployment.
@@ -79,4 +79,4 @@ ProCheff now uses secure Workload Identity Federation for Google Cloud deploymen
 - Micro UX animations for enhanced user experience
 - Learning-based unit conversion engine
 - Production-focused batch optimization
-```
+```bash

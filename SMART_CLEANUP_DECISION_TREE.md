@@ -1,4 +1,5 @@
-# ProCheff Smart Cleanup Decision Tree
+#  ProCheff Smart Cleanup Decision Tree
+
 ## Akıllı Temizlik Akışı (Decision Tree)
 
 ### 🎯 Amaç
@@ -85,7 +86,7 @@ Temizlikten sonra kontrol edilecekler:
 
 Her temizlik sonrası oluşturulacak rapor:
 
-```
+```bash
 Temizlik Tarihi: YYYY-MM-DD
 Toplam incelenen dosya: N
 Silinen: X
@@ -93,7 +94,7 @@ Arşivlenen: Y
 Taşınan: Z
 Build Sonucu: PASSED / FAILED
 Açıklama: (özet)
-```
+```bash
 
 Rapor `docs/cleanup_reports/` altına kaydedilir.
 
@@ -113,13 +114,13 @@ Rapor `docs/cleanup_reports/` altına kaydedilir.
 
 ## 9. 🔄 Karar Özeti (Akış Diyagramı Mantığı)
 
-```
+```bash
 Dosya analiz et → İşlevi belirle → Risk skorla → (≥60 sil / 40–59 arşiv / <40 tut)
     ↓
 Bağımlılığı kontrol et → istisna (config, migration, secret) varsa dur
     ↓
 Temizlik raporla → build/test → hata varsa geri al
-```
+```bash
 
 ---
 

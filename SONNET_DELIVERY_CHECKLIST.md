@@ -1,4 +1,4 @@
-# ✅ Sonnet Ekibi Teslimat Paketi - Kontrol Listesi
+#  ✅ Sonnet Ekibi Teslimat Paketi - Kontrol Listesi
 
 ## 📦 Teslim Edilen Dosyalar
 
