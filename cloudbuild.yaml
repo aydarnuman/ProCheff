@@ -12,23 +12,23 @@ steps:
   - id: "Docker build"
     name: "gcr.io/cloud-builders/docker"
     args:
-      ["build","-t","${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA","."]
+      ["build","-t","${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:${BUILD_ID}","."]
 
   - id: "Docker push"
     name: "gcr.io/cloud-builders/docker"
     args:
-      ["push","${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA"]
+      ["push","${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:${BUILD_ID}"]
 
   - id: "Deploy to Cloud Run"
     name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
     entrypoint: gcloud
     args:
       ["run","deploy","${_SERVICE}",
-       "--image","${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA",
+       "--image","${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:${BUILD_ID}",
        "--region","${_REGION}",
        "--allow-unauthenticated",
        "--project","$PROJECT_ID",
        "--set-secrets","ANTHROPIC_API_KEY=ANTHROPIC_API_KEY:latest"]
 
 images:
-  - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA"
+  - "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:${BUILD_ID}"
