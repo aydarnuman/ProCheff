@@ -41,17 +41,11 @@ const menuGroups: MenuGroup[] = [
         href: '/'
       },
       {
-        id: 'proposal-panel',
-        title: 'Teklif Paneli',
-        icon: 'Target',
-        href: '/proposal-panel',
-        badge: 'YENİ'
-      },
-      {
-        id: 'spec-parser',
-        title: 'Şartname Analizi',
-        icon: 'FileText',
-        href: '/spec-parser'
+        id: 'ihale-merkezi',
+        title: 'İhale Merkezi',
+        icon: 'ShoppingCart',
+        href: '/ihale-sartname',
+        badge: 'HEPSİ BURADA'
       },
       {
         id: 'recipe-adapter',
@@ -71,12 +65,7 @@ const menuGroups: MenuGroup[] = [
     title: 'Zekâ & Veriler',
     icon: 'BarChart3',
     items: [
-      {
-        id: 'spec-database',
-        title: 'Şartname Veritabanı',
-        icon: 'Database',
-        href: '/spec-database'
-      },
+
       {
         id: 'market-intelligence',
         title: 'Piyasa Trend Zekâsı',
